@@ -5,9 +5,9 @@ import Head from "next/head";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-
   const user = useUser();
+  const { data } = api.users.getAll.useQuery();
+  console.log(data);
 
   return (
     <>
@@ -20,6 +20,11 @@ const Home: NextPage = () => {
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <div>{!user.isSignedIn && <SignInButton />}</div>
           <div>{!!user.isSignedIn && <SignOutButton />}</div>
+        </div>
+        <div className="">
+          {data?.map((user) => (
+            <div key={user.id}>{JSON.stringify(user)}</div>
+          ))}
         </div>
       </main>
     </>
