@@ -66,10 +66,11 @@ const Home: NextPage = () => {
                   <ParkMenuSelection {...park} key={park.id} />
                 ))}
               </div>
+
+              <UserList />
             </div>
           </div>
         </div>
-        <UserList />
       </main>
     </>
   );
