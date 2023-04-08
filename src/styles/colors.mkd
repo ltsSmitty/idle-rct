@@ -1,0 +1,60 @@
+Colours from RCT
+
+Window background: 91, 163, 231: #5BA3E7
+Selection background:67, 135, 227: #4387E3
+
+Window Title bar color: 0, 39, 151: #002797
+
+Name/Date sort button top & left border Border color (3 pixels wide):
+98, 169, 223: #62A9DF
+119, 187, 239: #77BBEF
+98, 169, 233: #62A9DF
+
+Selection left and top inside border (2 pixels wide)
+65, 132, 226: #4184E2
+45, 106, 223: #2D6ADF
+
+White font on blue without aliasing: 215, 246, 255: #D7F6FF
+
+White font on selection menu while highlighted: 215 247, 255: #D7F7FF
+
+Background of selected item: 43, 103, 223: #2B67DF
+
+Black font color on menu: 23, 35, 35: #172323
+
+White font on "select scenario" with black border around letters: 239, 243, 243: #EFF3F3
+black border: 23, 35, 35: #172323
+
+Dividing border separating beginner parks/ challenging parks/ etc. (reddish)
+7 pixels
+183, 84, 84: #B75454
+199, 103, 103: #C76767
+199, 103, 103: #C76767
+168, 67, 67: #A84343
+143, 39, 39: #8F2727
+143, 39, 39: #8F2727
+153, 50, 50: #993232
+
+Main red background on scenario selection: 163, 59, 59: #A33B3B
+
+Selection expansion button highlighted color: 179, 79, 79: #B34F4F
+- Same for the scroll bar and scenario description panel on right
+
+White font on "scenario locked"
+255, 191, 191: #FFBFBF
+
+Grey background of menu:
+111, 131, 131: #6F8383
+
+dark Grey title bar: 47, 67, 67: #2F4343
+
+Darker red Disabled text: 143, 39, 39: #8F2727
+
+
+Home screen button backgrounds: some kind of alpha like 59, 115, 75: #3B734B
+lighter is 79, 135, 95: #4F875F
+darker is 47, 99, 59: #2F633B
+
+orange highlight banner is
+~ 255, 111, 23 with alpha: #FF6F17
+~ 25, 83, 0: #FF5300

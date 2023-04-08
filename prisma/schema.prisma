@@ -33,9 +33,10 @@ model Park {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name      String   @db.VarChar(255)
-    Account   Account? @relation(fields: [accountId], references: [id])
-    accountId String?
+    name         String   @db.VarChar(255)
+    Account      Account? @relation(fields: [accountId], references: [id])
+    accountId    String?
+    thumbnailUrl String?
 
     score Int?
 

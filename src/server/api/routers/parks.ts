@@ -9,4 +9,7 @@ export const parksRouter = createTRPCRouter({
     get: publicProcedure.input(z.object({ id: z.string() })).query(({ input, ctx }) => {
         return ctx.prisma.park.findUnique({ where: { id: input.id } });
     }),
+    getParksByAccount: publicProcedure.input(z.object({ accountId: z.string() })).query(({ input, ctx }) => {
+        return ctx.prisma.park.findMany({ where: { accountId: input.accountId } });
+    })
 });
