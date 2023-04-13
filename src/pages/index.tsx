@@ -70,6 +70,84 @@ const LoginScreen = () => {
   );
 };
 
+import { useForm } from "react-hook-form";
+import { Button } from "~/components/ui/button";
+const NewAccountForm = (props: { index: number }) => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      accountName: "accountName",
+    },
+  });
+
+  const { setActiveAccount, setIsChoosingAccount, updateAccountInfo } =
+    useAccountStore();
+
+  const ctx = api.useContext();
+
+  const { mutate, isLoading: accountCreating } =
+    api.users.createAccount.useMutation({
+      onSuccess: (data) => {
+        // force it to re-fetch
+        // do i really need this?
+        console.log(`mutation success. data: ${JSON.stringify(data)}`);
+        updateAccountInfo({ account: data, index: props.index });
+        setActiveAccount(props.index);
+        setIsChoosingAccount(false);
+        void ctx.users.invalidate();
+      },
+      onError: (error) => {
+        console.log(`mutation error. error: ${JSON.stringify(error)}`);
+      },
+    });
+
+  const onSubmit = (data: { accountName: string }) => {
+    const { accountName } = data;
+    const newAccount = {
+      name: accountName,
+      accountIndex: props.index,
+    };
+    const res = mutate(newAccount);
+  };
+
+  return (
+    <div>
+      {!accountCreating && (
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* register your input into the hook by invoking the "register" function */}
+          <div className="flex flex-col">
+            <div className="flex flex-row">
+              <input
+                defaultValue="account name"
+                {...register("accountName", {
+                  required: "An account name is required",
+                  maxLength: {
+                    value: 150,
+                    message: "Your account name is too long",
+                  },
+                })}
+                className=" w-1/2 rounded-sm border-2 text-stone-500"
+              />
+              <div className="pl-4">
+                <Button type="submit" className=" rounded-sm bg-stone-400 px-4">
+                  Submit
+                </Button>
+              </div>
+            </div>
+            {/* errors will return when field validation fails  */}
+            {errors.accountName && <p>{errors.accountName?.message}</p>}
+          </div>
+        </form>
+      )}
+      <div>Creating account...</div>
+    </div>
+  );
+};
+
 import {
   Dialog,
   DialogContent,
@@ -78,45 +156,65 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
+import { useAccountStore } from "~/stores/stores";
 
 const AccountSelectionButton = (props: {
   account?: Account;
   index: number;
 }) => {
-  const { account, index } = props;
+  const { index } = props;
+  const { accounts, setActiveAccount, setIsChoosingAccount } =
+    useAccountStore();
 
-  if (!account) {
+  const thisAccountIndex = accounts.findIndex((a) => a.accountIndex === index);
+  const thisAccount = accounts[thisAccountIndex];
+
+  console.log(
+    `in account selection button ${index}: ${JSON.stringify(thisAccount)}}`
+  );
+
+  {
     return (
       <div className=" static m-2 flex h-32 flex-col rounded-lg border-2 border-slate-400 bg-stone-600">
-        <div className=" left-0 p-2">Account {index}</div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <button className="flex-grow text-lg">Create New Account</button>
-          </DialogTrigger>
-          <DialogContent className="bg-emerald-700">
-            <DialogHeader>
-              <div className="text-emerald-500">
-                <DialogTitle className=" underline">New Account</DialogTitle>
-              </div>
-              <DialogDescription className="text-stone-700">
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+        {!thisAccount && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="flex-grow text-lg">
+                <div className="p-2">Account {index}</div>
+                Create New Account
+              </button>
+            </DialogTrigger>
+            <DialogContent className="h-40">
+              <DialogHeader>
+                <DialogTitle className=" underline">
+                  New Account in slot {index}
+                </DialogTitle>
+                <DialogDescription>
+                  Choose a name for your new account. This can be changed later.
+                </DialogDescription>
+                <NewAccountForm index={index} />
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        )}
+        {thisAccount && (
+          <button
+            className="flex-grow text-lg"
+            onClick={() => {
+              setActiveAccount(thisAccountIndex);
+              setIsChoosingAccount(false);
+            }}
+          >
+            {/* <div className="flex-grow place-content-center text-center text-lg"> */}
+            <div className=" p-2 align-middle text-lg">
+              Select account:
+              <span className="p-4 text-xl">{thisAccount.name}</span>
+            </div>
+          </button>
+        )}
       </div>
     );
   }
-
-  return (
-    <div>
-      <div>Account {index}</div>
-      <div>
-        <div>{account?.accountName}</div>
-      </div>
-    </div>
-  );
 };
 
 const USER_ACCOUNT_LIMIT = 5;
@@ -128,10 +226,11 @@ const AccountSelectionScreen = () => {
 
   // get the accounts for the user
 
-  const thisUser = api.users.getThisUser.useQuery();
+  const { data: thisUser, isLoading: userLoading } =
+    api.users.getThisUser.useQuery();
   console.log(`this user: ${JSON.stringify(thisUser)}`);
-  const { data: accounts } = api.users.getAccounts.useQuery();
-  console.log(`accounts: ${JSON.stringify(accounts)}`);
+
+  if (userLoading) return <div> user loading</div>;
 
   return (
     <div className="flex h-screen justify-center ">
@@ -143,11 +242,7 @@ const AccountSelectionScreen = () => {
           <div className="grid grid-cols-1">
             {Array.from({ length: USER_ACCOUNT_LIMIT }, (_, i) => i + 1).map(
               (idx) => (
-                <AccountSelectionButton
-                  account={accounts?.[idx]}
-                  key={idx}
-                  index={idx}
-                />
+                <AccountSelectionButton key={idx} index={idx} />
               )
             )}
           </div>
@@ -160,8 +255,19 @@ const AccountSelectionScreen = () => {
 
 const Home: NextPage = () => {
   const { user, isSignedIn } = useUser();
-  console.log(JSON.stringify(`client side user: ${JSON.stringify(user)}`));
-  const [account, setAccount] = useState<Account | null>(null);
+  const {
+    account,
+    isChoosingAccount,
+    setIsChoosingAccount,
+    setAccounts,
+    accounts,
+  } = useAccountStore();
+  const accountsFromDB = api.users.getAccounts.useQuery().data;
+  console.log(`accounts from db: ${JSON.stringify(accountsFromDB)}`);
+  console.log(`accounts in state: ${JSON.stringify(accounts)}`);
+
+  if (accountsFromDB && accountsFromDB.length > 0 && accounts.length == 0)
+    setAccounts(accountsFromDB);
 
   if (!isSignedIn) {
     return (
@@ -171,8 +277,7 @@ const Home: NextPage = () => {
     );
   }
 
-  if (!account || true) {
-    console.log(`No account selected`);
+  if (!account || isChoosingAccount) {
     return (
       <div className="">
         <AccountSelectionScreen />
@@ -192,8 +297,14 @@ const Home: NextPage = () => {
           <div className="  w-full border-x-2 md:max-w-4xl">
             <div className="">
               <SignOutButton />
+              <div>
+                <Button onClick={() => setIsChoosingAccount(true)}>
+                  {" "}
+                  Choose a different account
+                </Button>
+              </div>
               <div className="flex justify-center border-b-2 p-2">
-                <div>Your Parks</div>
+                <div>{account.name}&apos;s Parks</div>
               </div>
               <div className="m-4 grid grid-cols-2 gap-4">
                 {/* {parkData?.map((park) => (

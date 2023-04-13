@@ -11,3 +11,9 @@ interface ScenarioState {
     parkValue?: number;
     money?: number;
 }
+
+interface Account {
+    name: string;
+    id: string;
+    accountIndex: number;
+}

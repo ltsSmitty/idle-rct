@@ -41,6 +41,7 @@ export const usersRouter = createTRPCRouter({
                     }
                 })
             }
+            console.log(`backend getThisUser: ${JSON.stringify(thisUserReturn)}`)
             return thisUserReturn;
 
         }),
@@ -65,8 +66,25 @@ export const usersRouter = createTRPCRouter({
                 where: {
                     userId: userId,
                 },
-                take: 5
             });
             return accounts
         }),
+    createAccount: privateProcedure
+        .input(z.object({
+            name: z.string(),
+            accountIndex: z.number()
+        }))
+        .mutation(async ({ ctx, input }) => {
+            const userId = ctx.currentUserId
+            if (!userId) { throw new TRPCError({ code: "UNAUTHORIZED", message: "You must be logged in to do that." }) }
+
+            const account = await ctx.prisma.account.create({
+                data: {
+                    userId: userId,
+                    name: input.name,
+                    accountIndex: input.accountIndex,
+                }
+            });
+            return account
+        })
 })
