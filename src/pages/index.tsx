@@ -77,7 +77,7 @@ const NewAccountForm = (props: { index: number }) => {
       setIsChoosingAccount(false);
       // force it to re-fetch
       // do i really need this?
-      void ctx.users.invalidate();
+      void ctx.accounts.invalidate();
       console.log("account created");
     },
   });
@@ -138,24 +138,29 @@ import { useEffect } from "react";
 
 const AccountSelectionButton = (props: { index: number }) => {
   const { index } = props;
-  const { accounts, setActiveAccount, setIsChoosingAccount } =
-    useAccountStore();
+  const {
+    accounts,
+    setActiveAccount,
+    setIsChoosingAccount,
+    updateAccountInfo,
+  } = useAccountStore();
 
-  const thisAccountIndex = accounts.findIndex((a) => a.accountIndex === index);
+  const thisAccountIndex = accounts.findIndex((a) => a?.accountIndex === index);
   const thisAccount = accounts[thisAccountIndex];
+  const ctx = api.useContext();
 
   const {
     mutate,
-    isLoading: accountCreating,
-    isSuccess,
+    isLoading: accountDeleting,
+    isSuccess: accountDeleted,
   } = api.accounts.deleteAccount.useMutation({
     onSuccess: (numAccountsDeletedFromDB) => {
-      // updateAccountInfo({ account: data, index: props.index });
-      // setActiveAccount(props.index);
-      // setIsChoosingAccount(false);
-      // // force it to re-fetch
-      // // do i really need this?
-      // void ctx.users.invalidate();
+      updateAccountInfo({ account: null, index: props.index });
+      setActiveAccount(null);
+      setIsChoosingAccount(true);
+      // force it to re-fetch
+      // do i really need this?
+      void ctx.accounts.invalidate();
       console.log(`${numAccountsDeletedFromDB} rows deleted`);
     },
   });

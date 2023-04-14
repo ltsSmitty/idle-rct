@@ -3,10 +3,10 @@ import { create } from 'zustand';
 
 interface AccountState {
     account: Account | null,
-    accounts: Account[],
+    accounts: (Account | null)[],
     isChoosingAccount: boolean,
     setActiveAccount: (index: number | null) => void,
-    updateAccountInfo: (props: { account: Account, index: number }) => void,
+    updateAccountInfo: (props: { account: Account | null, index: number }) => void,
     setAccounts: (accounts: Account[]) => void,
     setIsChoosingAccount: (choosingAccount: boolean) => void,
 }
