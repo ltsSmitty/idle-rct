@@ -1,7 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "https://fonts.googleapis.com/css?family=Anuphan&display=swap";
 
 body {
-  @apply bg-emerald-700 text-stone-100;
+  @apply bg-emerald-700 font-anuphan text-stone-100;
 }
