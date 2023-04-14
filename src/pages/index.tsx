@@ -1,14 +1,10 @@
 import { SignInButton, useClerk, useUser } from "@clerk/nextjs";
-import { User } from "@clerk/nextjs/dist/api";
-import type { Park } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { scenarios } from "~/scenarios/backyard";
 
 import { api } from "~/utils/api";
-
-const PLACEHOLDER_THUMBNAIL_URL = "https://source.unsplash.com/random";
 
 const ScenarioCard = (props: {
   scenario: Scenario;
@@ -66,21 +62,18 @@ const NewAccountForm = (props: { index: number }) => {
 
   const ctx = api.useContext();
 
-  const {
-    mutate,
-    isLoading: accountCreating,
-    isSuccess,
-  } = api.accounts.createAccount.useMutation({
-    onSuccess: (data) => {
-      updateAccountInfo({ account: data, index: props.index });
-      setActiveAccount(props.index);
-      setIsChoosingAccount(false);
-      // force it to re-fetch
-      // do i really need this?
-      void ctx.accounts.invalidate();
-      console.log("account created");
-    },
-  });
+  const { mutate, isLoading: accountCreating } =
+    api.accounts.createAccount.useMutation({
+      onSuccess: (data) => {
+        updateAccountInfo({ account: data, index: props.index });
+        setActiveAccount(props.index);
+        setIsChoosingAccount(false);
+        // force it to re-fetch
+        // do i really need this?
+        void ctx.accounts.invalidate();
+        console.log("account created");
+      },
+    });
 
   const onSubmit = (data: { accountName: string }) => {
     const { accountName } = data;
@@ -135,6 +128,7 @@ import {
 } from "~/components/ui/dialog";
 import { useAccountStore } from "~/stores/stores";
 import { useEffect } from "react";
+import { LoadingPage, LoadingSpinner } from "~/components/ui/loadingSpinner";
 
 const AccountSelectionButton = (props: { index: number }) => {
   const { index } = props;
@@ -149,21 +143,17 @@ const AccountSelectionButton = (props: { index: number }) => {
   const thisAccount = accounts[thisAccountIndex];
   const ctx = api.useContext();
 
-  const {
-    mutate,
-    isLoading: accountDeleting,
-    isSuccess: accountDeleted,
-  } = api.accounts.deleteAccount.useMutation({
-    onSuccess: (numAccountsDeletedFromDB) => {
-      updateAccountInfo({ account: null, index: props.index });
-      setActiveAccount(null);
-      setIsChoosingAccount(true);
-      // force it to re-fetch
-      // do i really need this?
-      void ctx.accounts.invalidate();
-      console.log(`${numAccountsDeletedFromDB} rows deleted`);
-    },
-  });
+  const { mutate, isLoading: accountDeleting } =
+    api.accounts.deleteAccount.useMutation({
+      onSuccess: (numAccountsDeletedFromDB) => {
+        updateAccountInfo({ account: null, index: props.index });
+        setActiveAccount(null);
+        setIsChoosingAccount(true);
+        // force it to re-fetch
+        void ctx.accounts.invalidate();
+        console.log(`${numAccountsDeletedFromDB} rows deleted`);
+      },
+    });
 
   const handleDelete = () => {
     const accountID = thisAccount?.id;
@@ -197,6 +187,13 @@ const AccountSelectionButton = (props: { index: number }) => {
               </DialogHeader>
             </DialogContent>
           </Dialog>
+        )}
+        {/* {accountDeleting && ( */}
+        {true && (
+          <div>
+            <LoadingSpinner size={50} />
+            <div>Deleting account...</div>
+          </div>
         )}
         {thisAccount && (
           <div>
