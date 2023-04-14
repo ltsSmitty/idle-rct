@@ -15,10 +15,13 @@ export const useAccountStore = create<AccountState>()((set) => ({
     account: null,
     accounts: [],
     setActiveAccount: (index) => {
-        console.log(`setAccount:index`)
+        console.log(`setAccount: ${index ?? 0}`)
         const { accounts } = useAccountStore.getState()
-        if (index != null && accounts[index])
-            set({ account: accounts[index] })
+        console.log(`accounts: ${JSON.stringify(accounts)}`)
+        if (index != null && accounts[index - 1]) {
+            console.log(`actually setting account to ${JSON.stringify(accounts[index])}`)
+            set({ account: accounts[index - 1] })
+        }
     },
     isChoosingAccount: true,
     // score: 0,

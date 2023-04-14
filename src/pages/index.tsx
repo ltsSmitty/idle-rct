@@ -1,10 +1,9 @@
-import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import { SignInButton, useClerk, useUser } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/dist/api";
-import type { Park, Account } from "@prisma/client";
+import type { Park } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useState } from "react";
 import { scenarios } from "~/scenarios/backyard";
 
 import { api } from "~/utils/api";
@@ -32,29 +31,6 @@ const ScenarioCard = (props: {
   );
 };
 
-const ParkMenuSelection = (props: {
-  park: Park;
-  width: number;
-  height: number;
-}) => {
-  const { park, width, height } = props;
-  const thumbnailURL = park.thumbnailUrl ?? PLACEHOLDER_THUMBNAIL_URL;
-  return (
-    <div className="flex justify-center border-2">
-      <div className="">
-        <Image
-          unoptimized
-          src={thumbnailURL}
-          alt="The thumbnail for the park"
-          width={width}
-          height={height}
-        />
-        <div className="flex justify-center">{park.name}</div>
-      </div>
-    </div>
-  );
-};
-
 const LoginScreen = () => {
   return (
     <div className="flex h-screen justify-center ">
@@ -72,6 +48,7 @@ const LoginScreen = () => {
 
 import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
+
 const NewAccountForm = (props: { index: number }) => {
   const {
     register,
@@ -89,21 +66,21 @@ const NewAccountForm = (props: { index: number }) => {
 
   const ctx = api.useContext();
 
-  const { mutate, isLoading: accountCreating } =
-    api.users.createAccount.useMutation({
-      onSuccess: (data) => {
-        // force it to re-fetch
-        // do i really need this?
-        console.log(`mutation success. data: ${JSON.stringify(data)}`);
-        updateAccountInfo({ account: data, index: props.index });
-        setActiveAccount(props.index);
-        setIsChoosingAccount(false);
-        void ctx.users.invalidate();
-      },
-      onError: (error) => {
-        console.log(`mutation error. error: ${JSON.stringify(error)}`);
-      },
-    });
+  const {
+    mutate,
+    isLoading: accountCreating,
+    isSuccess,
+  } = api.accounts.createAccount.useMutation({
+    onSuccess: (data) => {
+      updateAccountInfo({ account: data, index: props.index });
+      setActiveAccount(props.index);
+      setIsChoosingAccount(false);
+      // force it to re-fetch
+      // do i really need this?
+      void ctx.users.invalidate();
+      console.log("account created");
+    },
+  });
 
   const onSubmit = (data: { accountName: string }) => {
     const { accountName } = data;
@@ -111,7 +88,7 @@ const NewAccountForm = (props: { index: number }) => {
       name: accountName,
       accountIndex: props.index,
     };
-    const res = mutate(newAccount);
+    mutate(newAccount);
   };
 
   return (
@@ -157,11 +134,9 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { useAccountStore } from "~/stores/stores";
+import { useEffect } from "react";
 
-const AccountSelectionButton = (props: {
-  account?: Account;
-  index: number;
-}) => {
+const AccountSelectionButton = (props: { index: number }) => {
   const { index } = props;
   const { accounts, setActiveAccount, setIsChoosingAccount } =
     useAccountStore();
@@ -169,9 +144,30 @@ const AccountSelectionButton = (props: {
   const thisAccountIndex = accounts.findIndex((a) => a.accountIndex === index);
   const thisAccount = accounts[thisAccountIndex];
 
-  console.log(
-    `in account selection button ${index}: ${JSON.stringify(thisAccount)}}`
-  );
+  const {
+    mutate,
+    isLoading: accountCreating,
+    isSuccess,
+  } = api.accounts.deleteAccount.useMutation({
+    onSuccess: (numAccountsDeletedFromDB) => {
+      // updateAccountInfo({ account: data, index: props.index });
+      // setActiveAccount(props.index);
+      // setIsChoosingAccount(false);
+      // // force it to re-fetch
+      // // do i really need this?
+      // void ctx.users.invalidate();
+      console.log(`${numAccountsDeletedFromDB} rows deleted`);
+    },
+  });
+
+  const handleDelete = () => {
+    const accountID = thisAccount?.id;
+    if (accountID && index) {
+      console.log(`deleting account ${accountID}, index ${index}`);
+      return mutate({ id: accountID, index });
+    }
+    console.log(`no account to delete`);
+  };
 
   {
     return (
@@ -198,19 +194,24 @@ const AccountSelectionButton = (props: {
           </Dialog>
         )}
         {thisAccount && (
-          <button
-            className="flex-grow text-lg"
-            onClick={() => {
-              setActiveAccount(thisAccountIndex);
-              setIsChoosingAccount(false);
-            }}
-          >
-            {/* <div className="flex-grow place-content-center text-center text-lg"> */}
-            <div className=" p-2 align-middle text-lg">
-              Select account:
-              <span className="p-4 text-xl">{thisAccount.name}</span>
-            </div>
-          </button>
+          <div>
+            <button
+              className="flex-grow text-lg"
+              onClick={() => {
+                setActiveAccount(thisAccountIndex);
+                setIsChoosingAccount(false);
+              }}
+            >
+              {/* <div className="flex-grow place-content-center text-center text-lg"> */}
+              <div className=" p-2 align-middle text-lg">
+                Select account:
+                <span className="p-4 text-xl">{thisAccount.name}</span>
+              </div>
+            </button>
+            <Button className="bg-stone-400" onClick={() => handleDelete()}>
+              Delete Account
+            </Button>
+          </div>
         )}
       </div>
     );
@@ -221,14 +222,19 @@ const USER_ACCOUNT_LIMIT = 5;
 
 const AccountSelectionScreen = () => {
   const { user: userLoggedIn } = useUser();
+  const { setAccounts, setActiveAccount, account } = useAccountStore();
 
+  const { data: accountsFromDB } = api.accounts.getAccounts.useQuery();
+  useEffect(
+    () => setAccounts(accountsFromDB ?? []),
+    [accountsFromDB, setAccounts, setActiveAccount, account]
+  );
+  // if (accountsFromDB && accountsFromDB.length > 0 && accounts.length == 0)
   if (!userLoggedIn || !userLoggedIn.id) return <LoginScreen />;
 
   // get the accounts for the user
 
-  const { data: thisUser, isLoading: userLoading } =
-    api.users.getThisUser.useQuery();
-  console.log(`this user: ${JSON.stringify(thisUser)}`);
+  const { isLoading: userLoading } = api.users.getThisUser.useQuery();
 
   if (userLoading) return <div> user loading</div>;
 
@@ -254,20 +260,10 @@ const AccountSelectionScreen = () => {
 };
 
 const Home: NextPage = () => {
-  const { user, isSignedIn } = useUser();
-  const {
-    account,
-    isChoosingAccount,
-    setIsChoosingAccount,
-    setAccounts,
-    accounts,
-  } = useAccountStore();
-  const accountsFromDB = api.users.getAccounts.useQuery().data;
-  console.log(`accounts from db: ${JSON.stringify(accountsFromDB)}`);
-  console.log(`accounts in state: ${JSON.stringify(accounts)}`);
-
-  if (accountsFromDB && accountsFromDB.length > 0 && accounts.length == 0)
-    setAccounts(accountsFromDB);
+  const { isSignedIn } = useUser();
+  const { signOut } = useClerk();
+  const { account, isChoosingAccount, setIsChoosingAccount } =
+    useAccountStore();
 
   if (!isSignedIn) {
     return (
@@ -277,6 +273,10 @@ const Home: NextPage = () => {
     );
   }
 
+  console.log(
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    `!!account: ${!!account} isChoosingAccount: ${isChoosingAccount}`
+  );
   if (!account || isChoosingAccount) {
     return (
       <div className="">
@@ -295,35 +295,33 @@ const Home: NextPage = () => {
       <main>
         <div className="flex h-screen justify-center ">
           <div className="  w-full border-x-2 md:max-w-4xl">
-            <div className="">
-              <SignOutButton />
-              <div>
-                <Button onClick={() => setIsChoosingAccount(true)}>
-                  {" "}
-                  Choose a different account
+            <div className="grid grid-cols-2 py-2">
+              <div className="flex justify-center">
+                <Button onClick={() => signOut()} className="w-1/2">
+                  Sign out
                 </Button>
               </div>
-              <div className="flex justify-center border-b-2 p-2">
-                <div>{account.name}&apos;s Parks</div>
+              <div className="flex  justify-center">
+                <Button
+                  className="w-1/2"
+                  onClick={() => setIsChoosingAccount(true)}
+                >
+                  {account.name}
+                </Button>
               </div>
-              <div className="m-4 grid grid-cols-2 gap-4">
-                {/* {parkData?.map((park) => (
-                  <ParkMenuSelection
-                    park={park}
-                    width={200}
-                    height={200}
-                    key={park.id}
-                  />
-                ))} */}
-                {scenarios.map((scenario, idx) => (
-                  <ScenarioCard
-                    scenario={scenario}
-                    key={idx}
-                    width={320}
-                    height={320}
-                  />
-                ))}
-              </div>
+            </div>
+            <div className="flex justify-center border-b-2 p-2">
+              <div>{account.name}&apos;s Parks</div>
+            </div>
+            <div className="m-4 grid grid-cols-2 gap-4">
+              {scenarios.map((scenario, idx) => (
+                <ScenarioCard
+                  scenario={scenario}
+                  key={idx}
+                  width={320}
+                  height={320}
+                />
+              ))}
             </div>
           </div>
         </div>

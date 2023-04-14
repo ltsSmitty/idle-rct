@@ -55,36 +55,5 @@ export const usersRouter = createTRPCRouter({
             }
         })
         return createdUser
-    }),
-    getAccounts: privateProcedure
-        .query(async ({ ctx }) => {
-            const userId = ctx.currentUserId
-            console.log(`user: ${JSON.stringify(userId)}`)
-            if (!userId) { throw new TRPCError({ code: "UNAUTHORIZED", message: "You must be logged in to do that." }) }
-
-            const accounts = await ctx.prisma.account.findMany({
-                where: {
-                    userId: userId,
-                },
-            });
-            return accounts
-        }),
-    createAccount: privateProcedure
-        .input(z.object({
-            name: z.string(),
-            accountIndex: z.number()
-        }))
-        .mutation(async ({ ctx, input }) => {
-            const userId = ctx.currentUserId
-            if (!userId) { throw new TRPCError({ code: "UNAUTHORIZED", message: "You must be logged in to do that." }) }
-
-            const account = await ctx.prisma.account.create({
-                data: {
-                    userId: userId,
-                    name: input.name,
-                    accountIndex: input.accountIndex,
-                }
-            });
-            return account
-        })
+    })
 })
