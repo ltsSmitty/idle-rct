@@ -188,9 +188,9 @@ const AccountSelectionButton = (props: { index: number }) => {
             </DialogContent>
           </Dialog>
         )}
-        {/* {accountDeleting && ( */}
-        {true && (
-          <div>
+        {/* {true && ( */}
+        {accountDeleting && (
+          <div className="flex items-center">
             <LoadingSpinner size={50} />
             <div>Deleting account...</div>
           </div>
