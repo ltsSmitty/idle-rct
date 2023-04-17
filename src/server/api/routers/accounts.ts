@@ -24,18 +24,17 @@ export const accountsRouter = createTRPCRouter({
             name: z.string(),
             accountIndex: z.number()
         }))
-        .mutation(async ({ ctx, input }) => {
+        .mutation(async ({ ctx, input: { name, accountIndex } }) => {
             const userId = ctx.currentUserId
             if (!userId) { throw new TRPCError({ code: "UNAUTHORIZED", message: "You must be logged in to do that." }) }
 
-            const account = await ctx.prisma.account.create({
+            return await ctx.prisma.account.create({
                 data: {
-                    userId: userId,
-                    name: input.name,
-                    accountIndex: input.accountIndex,
+                    userId,
+                    name,
+                    accountIndex,
                 }
             });
-            return account
         }),
     deleteAccount: privateProcedure
         .input(z.object({
@@ -49,7 +48,7 @@ export const accountsRouter = createTRPCRouter({
             const accounts = await ctx.prisma.account.deleteMany({
                 where: {
                     userId: userId,
-                    accountIndex: (input.index) ?? -1,
+                    accountIndex: input.index ?? -1,
                 }
             });
             return accounts.count
