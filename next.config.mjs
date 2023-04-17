@@ -19,7 +19,20 @@ const config = {
     defaultLocale: "en",
   },
   images: {
-    domains: ["images.unsplash.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.clerk.dev",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.gravatar.com",
+        port: "",
+        pathname: "/**",
+      },
+    ],
   },
 };
 export default config;

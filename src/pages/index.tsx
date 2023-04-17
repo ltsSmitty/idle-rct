@@ -3,6 +3,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { scenarios } from "~/scenarios/backyard";
+import logo1 from "~/assets/images/logo1.png";
 
 import { api } from "~/utils/api";
 
@@ -33,9 +34,9 @@ const LoginScreen = () => {
       <div className="  w-full border-x-2 md:max-w-4xl">
         <div className="">
           <div className="flex justify-center border-b-2 p-2">
-            <SignInButton />
+            <SignInButton mode="modal" />
           </div>
-          <div className="m-4 grid grid-cols-2 gap-4"></div>
+          <div className=" grid grid-cols-2 gap-4"></div>
         </div>
       </div>
     </div>
@@ -129,6 +130,7 @@ import {
 import { useAccountStore } from "~/stores/stores";
 import { useEffect } from "react";
 import { LoadingPage, LoadingSpinner } from "~/components/ui/loadingSpinner";
+import { UserSidebar } from "~/components/sidebar/sidebar";
 
 const AccountSelectionButton = (props: { index: number }) => {
   const { index } = props;
@@ -166,7 +168,7 @@ const AccountSelectionButton = (props: { index: number }) => {
 
   {
     return (
-      <div className=" static m-2 flex h-32 flex-col rounded-lg border-2 border-slate-400 bg-stone-600">
+      <div className=" static m-2 flex h-32 flex-col rounded-lg border-2 border-stone-400 bg-stone-600">
         {!thisAccount && (
           <Dialog>
             <DialogTrigger asChild>
@@ -238,10 +240,16 @@ const AccountSelectionScreen = () => {
 
   const { isLoading: userLoading } = api.users.getThisUser.useQuery();
 
-  if (userLoading) return <div> user loading</div>;
+  if (userLoading)
+    return (
+      <div className="">
+        {" "}
+        <LoadingPage />
+      </div>
+    );
 
   return (
-    <div className="flex h-screen justify-center ">
+    <div className="flex h-screen justify-center bg-purple-500">
       <div className="  w-full border-x-2 border-stone-400 md:max-w-4xl">
         <div className="">
           <div className="flex justify-center border-b-2  p-2">
@@ -254,7 +262,6 @@ const AccountSelectionScreen = () => {
               )
             )}
           </div>
-          <div className="m-4 grid grid-cols-2 gap-4"></div>
         </div>
       </div>
     </div>
@@ -262,14 +269,24 @@ const AccountSelectionScreen = () => {
 };
 
 const Home: NextPage = () => {
-  const { isSignedIn } = useUser();
+  const { isSignedIn, isLoaded, user } = useUser();
   const { signOut } = useClerk();
   const { account, isChoosingAccount, setIsChoosingAccount } =
     useAccountStore();
 
+  if (!isLoaded) {
+    return <div>Loading auth...</div>;
+  }
+
+  console.log(
+    ` isLoaded: ${isLoaded} isSignedIn: ${isSignedIn}, user: ${user}`
+  );
+
   if (!isSignedIn) {
+    console.log(`not signed in`);
     return (
       <div className="">
+        <UserSidebar />
         <LoginScreen />
       </div>
     );
@@ -281,7 +298,10 @@ const Home: NextPage = () => {
   );
   if (!account || isChoosingAccount) {
     return (
-      <div className="">
+      <div className="flex">
+        <div className="">
+          <UserSidebar />
+        </div>
         <AccountSelectionScreen />
       </div>
     );
@@ -295,15 +315,16 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div className="flex h-screen justify-center ">
+        <UserSidebar />
+        <div className="flex h-screen justify-center bg-red-50">
           <div className="  w-full border-x-2 md:max-w-4xl">
-            <div className="grid grid-cols-2 py-2">
-              <div className="flex justify-center">
+            <div className=" grid grid-cols-2 py-2">
+              <div className=" flex justify-center">
                 <Button onClick={() => signOut()} className="w-1/2">
                   Sign out
                 </Button>
               </div>
-              <div className="flex  justify-center">
+              <div className="flex justify-center">
                 <Button
                   className="w-1/2"
                   onClick={() => setIsChoosingAccount(true)}
@@ -315,7 +336,7 @@ const Home: NextPage = () => {
             <div className="flex justify-center border-b-2 p-2">
               <div>{account.name}&apos;s Parks</div>
             </div>
-            <div className="m-4 grid grid-cols-2 gap-4">
+            <div className="m-4 grid grid-cols-2 gap-4 ">
               {scenarios.map((scenario, idx) => (
                 <ScenarioCard
                   scenario={scenario}
@@ -324,6 +345,12 @@ const Home: NextPage = () => {
                   height={320}
                 />
               ))}
+              <div
+                className="h-screen bg-cover bg-center"
+                style={{ backgroundImage: `url(${logo1.src})` }}
+              >
+                hello
+              </div>
             </div>
           </div>
         </div>
@@ -333,3 +360,22 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+enum ContentType {
+  Backyard,
+}
+
+// const [state, setState] = React.useState<ContentType>();
+
+// setState(ContentType.Backyard);
+
+// const renderContent = (type: ContentType) => {
+//   switch(type) {
+//     case ContentType.Backyard:
+//       return <></>;
+//     default:
+//       return <></>;
+//   }
+// }
+
+// renderContent(state);

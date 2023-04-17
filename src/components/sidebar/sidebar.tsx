@@ -37,20 +37,25 @@ export const UserSidebar = () => {
 const ProfileThumbnail = () => {
   const { user } = useUser();
   return (
-    <div className=" flex flex-col items-center ">
-      {user?.profileImageUrl ? (
-        <Image
-          src={user?.profileImageUrl}
-          alt="The thumbnail for the park"
-          width={100}
-          height={100}
-          className=" h-10 w-10 flex-auto rounded-lg border border-stone-300"
-        />
-      ) : (
-        <ThumbnailCircle
-          character={user && user.username ? user.username[0] : "?"}
-        />
-      )}
+    <div className=" relative flex flex-col items-center ">
+      <div className="h-10 w-10 flex-auto">
+        {user?.profileImageUrl ? (
+          <div className="z-0 h-10 w-10 flex-auto">
+            <Image
+              src={user?.profileImageUrl}
+              alt="User profile image"
+              width={100}
+              height={100}
+              className=" rounded-lg border border-stone-300"
+            />
+            <div className="inset-left-0 absolute inset-y-0 z-10 h-10  w-10 rounded-md border border-stone-300 bg-slate-300 opacity-0  hover:opacity-30"></div>
+          </div>
+        ) : (
+          <ThumbnailCircle
+            character={user && user.username ? user.username[0] : "?"}
+          />
+        )}
+      </div>
     </div>
   );
 };
@@ -62,7 +67,7 @@ const AccountThumbnails = () => {
       {accounts.map((account, index) => {
         if (!account) return;
         return (
-          <div key={index} className="  ">
+          <div key={index} className=" ">
             <ThumbnailCircle account={account} />
           </div>
         );

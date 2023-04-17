@@ -6,7 +6,7 @@ export default {
     extend: {
       fontFamily: {
         anuphan: ["Anuphan", "sans-serif"],
-      }
+      },
     },
   },
   plugins: [],

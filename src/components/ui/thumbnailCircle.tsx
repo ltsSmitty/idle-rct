@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { cn } from "~/lib/utils";
-import { randomBackgroundColor } from "~/lib/utils";
+import { randomBackgroundColor } from "~/lib/backgroundColorList";
 
 // which character in the account ID to reference for the background color
 const ID_LETTER_INDEX = 7;
@@ -19,14 +19,15 @@ export const ThumbnailCircle = (props: {
   }, [account?.id, charToDisplay]);
 
   return (
-    <div
-      className={cn(
-        "flex h-10 w-10 items-center justify-center rounded-md border text-xl font-bold text-white ",
-        backgroundColor,
-
-      )}
-    >
-      {charToDisplay.toLocaleUpperCase() ?? "?"}
+    <div className="flex h-10 w-10 items-center justify-center  text-xl font-bold text-white">
+      <div
+        className={cn(
+          " flex h-full w-full items-center justify-center rounded-md border",
+          backgroundColor
+        )}
+      >
+        {charToDisplay.toLocaleUpperCase() ?? "?"}
+      </div>
     </div>
   );
 };
