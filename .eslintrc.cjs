@@ -37,6 +37,7 @@ const config = {
         },
       },
     ],
+    "@typescript-eslint/restrict-template-expressions": "warn",
   },
 };
 
