@@ -16,8 +16,8 @@ export const UserSidebar = () => {
   };
 
   return (
-    <div className="flex w-16 flex-col ">
-      <div className=" justify-center">
+    <div className="flex h-full w-16 flex-col bg-stone-800">
+      <div className=" h-full justify-center">
         <ProfileThumbnail />
         <div className="">
           <HorizontalBar />
@@ -46,9 +46,9 @@ const ProfileThumbnail = () => {
               alt="User profile image"
               width={100}
               height={100}
-              className=" rounded-lg border border-stone-300"
+              className=" rounded-lg hover:border hover:border-stone-300"
             />
-            <div className="inset-left-0 absolute inset-y-0 z-10 h-10  w-10 rounded-md border border-stone-300 bg-slate-300 opacity-0  hover:opacity-30"></div>
+            <div className="inset-left-0 absolute inset-y-0 z-10 h-10  w-10 rounded-md bg-slate-300 opacity-0 hover:border hover:border-stone-300  hover:opacity-30"></div>
           </div>
         ) : (
           <ThumbnailCircle
@@ -60,16 +60,32 @@ const ProfileThumbnail = () => {
   );
 };
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+
 const AccountThumbnails = () => {
   const { accounts } = useAccountStore();
   return (
-    <div className=" flex flex-col items-center gap-y-2 ">
+    <div className=" flex flex-col items-center gap-y-4 ">
       {accounts.map((account, index) => {
         if (!account) return;
         return (
-          <div key={index} className=" ">
-            <ThumbnailCircle account={account} />
-          </div>
+          <TooltipProvider key={index}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <ThumbnailCircle account={account} />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent sideOffset={4}>
+                <p>Select this account</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         );
       })}
     </div>
