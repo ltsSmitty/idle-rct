@@ -30,7 +30,8 @@ export const UserSidebar = () => {
   );
 };
 
-import loginIcon from "~/assets/images/login.svg";
+import login from "~/assets/images/login.svg";
+
 const ProfileThumbnail = () => {
   const { user } = useUser();
   return (
@@ -49,7 +50,7 @@ const ProfileThumbnail = () => {
           </div>
         ) : (
           <Image
-            src={loginIcon}
+            src={login as string}
             alt="User profile image"
             width={100}
             height={100}

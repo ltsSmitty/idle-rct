@@ -14,6 +14,7 @@
     "@prisma/client": "^4.11.0",
     "@radix-ui/react-dialog": "^1.0.3",
     "@radix-ui/react-popover": "^1.0.5",
+    "@radix-ui/react-tooltip": "^1.0.5",
     "@tanstack/react-query": "^4.28.0",
     "@trpc/client": "^10.18.0",
     "@trpc/next": "^10.18.0",
@@ -33,6 +34,7 @@
     "zustand": "^4.3.7"
   },
   "devDependencies": {
+    "@svgr/webpack": "^7.0.0",
     "@types/eslint": "^8.21.3",
     "@types/node": "^18.15.5",
     "@types/prettier": "^2.7.2",

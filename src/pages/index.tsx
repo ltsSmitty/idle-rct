@@ -278,10 +278,6 @@ const Home: NextPage = () => {
     return <div>Loading auth...</div>;
   }
 
-  console.log(
-    ` isLoaded: ${isLoaded} isSignedIn: ${isSignedIn}, user: ${user}`
-  );
-
   if (!isSignedIn) {
     console.log(`not signed in`);
     return (

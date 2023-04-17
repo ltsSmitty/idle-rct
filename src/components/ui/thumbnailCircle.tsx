@@ -22,7 +22,7 @@ export const ThumbnailCircle = (props: {
     <div className="flex h-10 w-10 items-center justify-center  text-xl font-bold text-white">
       <div
         className={cn(
-          " flex h-full w-full select-none items-center justify-center rounded-md ",
+          " flex h-full w-full select-none items-center justify-center rounded-md hover:border",
           backgroundColor
         )}
       >
