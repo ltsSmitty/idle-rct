@@ -364,5 +364,6 @@ export class GuestController {
 
         // calculate + perform new guests' tick activity
 
+        return this;
     }
 }

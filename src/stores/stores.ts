@@ -14,17 +14,13 @@ interface AccountState {
 export const useAccountStore = create<AccountState>()((set) => ({
     account: null,
     accounts: [],
+    isChoosingAccount: true,
     setActiveAccount: (index) => {
-        console.log(`setAccount: ${index ?? 0}`)
         const { accounts } = useAccountStore.getState()
-        console.log(`accounts: ${JSON.stringify(accounts)}`)
         if (index != null && accounts[index]) {
-            console.log(`actually setting account to ${JSON.stringify(accounts[index])}`)
             set({ account: accounts[index] })
         }
     },
-    isChoosingAccount: true,
-    // score: 0,
     updateAccountInfo: ({ account, index }) => {
         const { accounts } = useAccountStore.getState()
         if (index != null && accounts[index])
@@ -35,4 +31,25 @@ export const useAccountStore = create<AccountState>()((set) => ({
         set({ accounts })
     },
     setIsChoosingAccount: (isChoosingAccount) => set({ isChoosingAccount }),
+}))
+
+const ids = [...Array<number>(150)].map((_, i) => i);
+
+const calcXY = (): [number, number] => [Math.random() * window.innerWidth, Math.random() * window.innerHeight]
+
+interface ItemProps {
+    items: [number, number][]
+}
+
+const useStore = create((set) => ({
+    items: ids,
+    ...(Object.fromEntries(ids.map((id) => [id, calcXY()])) as Record<number, [number, number]>),
+    advance() {
+        // Set all coordinates randomly
+        set((state) => {
+            const coords = {}
+            for (let i = 0; i < state.items.length; i++) coords[state.items[i]] = calcXY()
+            return coords
+        })
+    }
 }))
