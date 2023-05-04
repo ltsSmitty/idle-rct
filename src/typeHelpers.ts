@@ -13,3 +13,11 @@ interface DeepPartialArray<T> extends Array<DeepPartial<T>> { }
 type DeepPartialObject<T> = {
     [P in keyof T]?: DeepPartial<T[P]>;
 };
+
+export type Merge<F, S> = {
+    [K in keyof F | keyof S]: K extends keyof S
+    ? S[K]
+    : K extends keyof F
+    ? F[K]
+    : never;
+};

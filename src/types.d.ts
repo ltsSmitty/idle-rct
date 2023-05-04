@@ -18,25 +18,26 @@ interface Account {
     accountIndex: number;
 }
 
-type GuestActivity =
-    "waiting in line" |
-    "riding ride" |
-    "eating" |
-    "drinking" |
-    "using toilet" |
-    "watching ride" |
-    "watching construction" |
-    "sitting" |
-    "walking to a ride" |
-    "walking to a shop" |
-    "walking to toilet" |
-    "walking to ride entrance" |
-    "walking to ride exit" |
-    "walking to park entrance" |
-    "walking to park exit" |
-    "vomiting" |
-    "wandering" |
-    "gone" // this guest will no longer count for anything, either dead or left the park
+enum GuestActivity {
+    WAITING_IN_LINE = "waiting in line",
+    RIDING_RIDE = "riding ride",
+    EATING = "eating",
+    DRINKING = "drinking",
+    USING_TOILET = "using toilet",
+    WATCHING_RIDE = "watching ride",
+    WATCHING_CONSTRUCTION = "watching construction",
+    SITTING = "sitting",
+    WALKING_TO_RIDE = "walking to a ride",
+    WALKING_TO_SHOP = "walking to a shop",
+    WALKING_TO_TOILET = "walking to toilet",
+    WALKING_TO_RIDE_ENTRANCE = "walking to ride entrance",
+    WALKING_TO_RIDE_EXIT = "walking to ride exit",
+    WALKING_TO_PARK_ENTRANCE = "walking to park entrance",
+    WALKING_TO_PARK_EXIT = "walking to park exit",
+    VOMITING = "vomiting",
+    WANDERING = "wandering",
+    GONE = "gone" // this guest will no longer count for anything, either dead or left the park
+}
 
 type CoordsXYZ = {
     x: number;

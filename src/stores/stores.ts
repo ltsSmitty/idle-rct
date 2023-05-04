@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 
 interface AccountState {
-    account: Account | null,
+    readonly account: Account | null,
     accounts: (Account | null)[],
     isChoosingAccount: boolean,
     setActiveAccount: (index: number | null) => void,
@@ -33,23 +33,3 @@ export const useAccountStore = create<AccountState>()((set) => ({
     setIsChoosingAccount: (isChoosingAccount) => set({ isChoosingAccount }),
 }))
 
-const ids = [...Array<number>(150)].map((_, i) => i);
-
-const calcXY = (): [number, number] => [Math.random() * window.innerWidth, Math.random() * window.innerHeight]
-
-interface ItemProps {
-    items: [number, number][]
-}
-
-const useStore = create((set) => ({
-    items: ids,
-    ...(Object.fromEntries(ids.map((id) => [id, calcXY()])) as Record<number, [number, number]>),
-    advance() {
-        // Set all coordinates randomly
-        set((state) => {
-            const coords = {}
-            for (let i = 0; i < state.items.length; i++) coords[state.items[i]] = calcXY()
-            return coords
-        })
-    }
-}))

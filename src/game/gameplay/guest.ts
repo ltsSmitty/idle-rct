@@ -1,4 +1,5 @@
 
+import { GuestActivity } from "~/types/GuestActivity";
 import { type Upgrade, UpgradeController, type UpgradeEffect } from "./upgrade";
 
 export type GuestGenerationKey = Pick<Guest,
@@ -25,7 +26,7 @@ export type ModifierValue = {
 /** The range + and - from the Guest's chosen intensityPreferenceRange and nauseaTolleranceRange */
 const BOUNDED_PROPERTY_RANGE = 1.5;
 
-const STARTING_GUEST_ACTIVITY: GuestActivity = "walking to park entrance"
+const STARTING_GUEST_ACTIVITY = GuestActivity.WALKING_TO_PARK_ENTRANCE
 
 type GuestGenerationModifiers = Record<keyof GuestGenerationKey, ModifierValue>
 
@@ -83,7 +84,7 @@ export class GuestBuilder {
 
         const thisGuestId = this.nextGuestId++
 
-        return {
+        const newGuest = {
             id: thisGuestId,
             name: `Guest ${thisGuestId}`,
             location: this.guestGenerationLocation,
@@ -107,6 +108,7 @@ export class GuestBuilder {
             currentActivity: STARTING_GUEST_ACTIVITY,
             ticksTilActivityChange: -1
         }
+        return newGuest;
     }
 
     generateGuests(numGuests: number): Guest[] {
@@ -119,7 +121,7 @@ export class GuestBuilder {
 }
 
 const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
-    "waiting in line": (guest) => {
+    [GuestActivity.WAITING_IN_LINE]: (guest) => {
         guest.energy -= 0.1
         guest.hunger += 0.1
         guest.thirst += 0.1
@@ -127,13 +129,13 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.happiness -= 0.1
         guest.nausea -= 0.1
     },
-    "riding ride": (guest) => {
+    [GuestActivity.RIDING_RIDE]: (guest) => {
         guest.energy += 0.1
         guest.toilet += 0.1
         guest.happiness += 0.3
         guest.nausea += 0.2
     },
-    "eating": (guest) => {
+    [GuestActivity.EATING]: (guest) => {
         guest.energy += 0.1
         guest.hunger -= 1.0
         guest.thirst += 0.2
@@ -141,18 +143,18 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.happiness += 0.1
         guest.nausea -= 0.1
     },
-    "drinking": (guest) => {
+    [GuestActivity.DRINKING]: (guest) => {
         guest.thirst -= 1.0
         guest.toilet += 0.1
         guest.happiness += 0.1
         guest.nausea -= 0.1
     },
-    "using toilet": (guest) => {
+    [GuestActivity.USING_TOILET]: (guest) => {
         guest.toilet -= 1.0
         guest.happiness -= 0.5
         guest.nausea -= 0.2
     },
-    "watching ride": (guest) => {
+    [GuestActivity.WATCHING_RIDE]: (guest) => {
         guest.energy -= 0.1
         guest.hunger += 0.1
         guest.thirst += 0.1
@@ -160,7 +162,7 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.happiness -= 0.1
         guest.nausea -= 0.1
     },
-    "watching construction": (guest) => {
+    [GuestActivity.WATCHING_CONSTRUCTION]: (guest) => {
         guest.energy -= 0.1
         guest.hunger += 0.1
         guest.thirst += 0.1
@@ -168,7 +170,7 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.happiness -= 0.1
         guest.nausea -= 0.1
     },
-    "sitting": (guest) => {
+    [GuestActivity.SITTING]: (guest) => {
         guest.energy -= 0.1
         guest.hunger += 0.1
         guest.thirst += 0.1
@@ -176,7 +178,7 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.happiness -= 0.1
         guest.nausea -= 0.1
     },
-    "walking to a ride": (guest) => {
+    [GuestActivity.WALKING_TO_RIDE]: (guest) => {
         guest.energy -= 0.1
         guest.hunger += 0.1
         guest.thirst += 0.1
@@ -184,7 +186,7 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.happiness -= 0.1
         guest.nausea -= 0.1
     },
-    "walking to a shop": (guest) => {
+    [GuestActivity.WALKING_TO_SHOP]: (guest) => {
         guest.energy -= 0.1
         guest.hunger += 0.1
         guest.thirst += 0.1
@@ -192,7 +194,7 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.happiness -= 0.1
         guest.nausea -= 0.1
     },
-    "walking to toilet": (guest) => {
+    [GuestActivity.WALKING_TO_TOILET]: (guest) => {
         guest.energy -= 0.1
         guest.hunger += 0.1
         guest.thirst += 0.1
@@ -201,7 +203,7 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.nausea -= 0.1
     },
 
-    "walking to ride entrance": (guest) => {
+    [GuestActivity.WALKING_TO_RIDE_ENTRANCE]: (guest) => {
         guest.energy -= 0.1
         guest.hunger += 0.1
         guest.thirst += 0.1
@@ -209,7 +211,7 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.happiness -= 0.1
         guest.nausea -= 0.1
     },
-    "walking to ride exit": (guest) => {
+    [GuestActivity.WALKING_TO_RIDE_EXIT]: (guest) => {
         guest.energy -= 0.1
         guest.hunger += 0.1
         guest.thirst += 0.1
@@ -217,7 +219,7 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.happiness -= 0.1
         guest.nausea -= 0.1
     },
-    "walking to park entrance": (guest) => {
+    [GuestActivity.WALKING_TO_PARK_ENTRANCE]: (guest) => {
         guest.energy -= 0.1
         guest.hunger += 0.1
         guest.thirst += 0.1
@@ -225,7 +227,7 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.happiness -= 0.1
         guest.nausea -= 0.1
     },
-    "walking to park exit": (guest) => {
+    [GuestActivity.WALKING_TO_PARK_EXIT]: (guest) => {
         guest.energy -= 0.1
         guest.hunger += 0.1
         guest.thirst += 0.1
@@ -233,7 +235,7 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.happiness -= 0.1
         guest.nausea -= 0.1
     },
-    "vomiting": (guest) => {
+    [GuestActivity.VOMITING]: (guest) => {
         guest.energy -= 0.1
         guest.hunger += 0.1
         guest.thirst += 0.1
@@ -241,7 +243,7 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.happiness -= 0.1
         guest.nausea += 0.1
     },
-    "wandering": (guest) => {
+    [GuestActivity.WANDERING]: (guest) => {
         guest.energy -= 0.1
         guest.hunger += 0.1
         guest.thirst += 0.1
@@ -249,7 +251,7 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
         guest.happiness -= 0.1
         guest.nausea -= 0.1
     },
-    "gone": (guest) => {
+    [GuestActivity.GONE]: (guest) => {
         guest.energy = 0
         guest.hunger = 0
         guest.thirst = 0
@@ -261,7 +263,7 @@ const baseGuestActivityEffect: Record<GuestActivity, (guest: Guest) => void> = {
 
 
 export class GuestGenerator {
-    private guestGenerationRate = 2 // guests per tick
+    private guestGenerationRate = 3 // guests per tick
 
     guestBuilder: GuestBuilder
     private upgrades: Upgrade[] = []
@@ -302,10 +304,10 @@ export class GuestUpdater {
     }
 
     updateExistingGuests(guests: Guest[]) {
-        guests.forEach(g => {
-            baseGuestActivityEffect[g.currentActivity](g)
+        const mappedGuests = guests.map(g => {
+            baseGuestActivityEffect[g.currentActivity]({ ...g })
         })
-        return guests
+        return mappedGuests
     }
 
     createNewGuests(numGuests: number, activity: GuestActivity) {
@@ -351,19 +353,23 @@ export class GuestController {
         // loop through all guests and
     }
 
-    doTick() {
-        this.ticks++;
+    doTick({ guests }: { guests: Guest[], tick: number }) {
+        // const { guests, tick } = props;
+        // this.ticks = tick;
         this.applyUpgrades();
 
         // calculate + perform existing guests' tick activity
-        this.guestUpdater.updateExistingGuests(this.guests)
+        // this.guestUpdater.updateExistingGuests(guests)
 
         // generate new guests
         const newGuests = this.guestGenerator.generate()
-        this.guests.push(...newGuests)
+        console.log(`adding ${newGuests.length} new guests`)
+        // gameStores.default.addGuests(newGuests);
+        const allGuests = [...this.guests, ...newGuests]
+        this.guests = allGuests
 
         // calculate + perform new guests' tick activity
 
-        return this;
+        return { guests: this.guests }
     }
 }
