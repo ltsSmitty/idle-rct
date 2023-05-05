@@ -22,10 +22,12 @@ const doTick = () => useStore.setState((state => {
 }
 ))
 
-
 const calculateGuestsToGenerate = (rate: number) => {
     // doing 1 - Math.random so that we get 1 included in the range
-    return Math.floor(rate * (1 - Math.random()) * 10);
+    // const ONE_PERCENT = 1 - Number(Math.random().toFixed(2))
+    const generatedValue = (rate * (1 - Number(Math.random().toFixed(2))));
+    console.log(`Generated value: ${generatedValue}`)
+    return Math.floor(generatedValue)
 }
 
 export default doTick;

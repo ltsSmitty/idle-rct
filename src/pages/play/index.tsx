@@ -2,17 +2,13 @@ import { type NextPage } from "next";
 import { useStore } from "~/stores/slices/allStateInOneWithoutActions";
 import { GuestActivity } from "~/types/GuestActivity";
 import doTick from "~/stores/slices/allStoreActions";
+import { GameController } from "~/stores/slices/gameController";
+import { useRef } from "react";
 
 const GuestDisplayColumns = ({ guests }: { guests: Guest[] }) => {
-  // const { updateGuestActivity } = useBoundGameState();
+  const renderRef = useRef(1);
+  renderRef.current++;
 
-  const getRandomActivity = () => {
-    const activities = Object.values(GuestActivity);
-    return (
-      activities[Math.floor(Math.random() * activities.length)] ??
-      GuestActivity.GONE
-    );
-  };
   return (
     <div className="flex flex-wrap">
       {guests.map((guest) => {
@@ -23,6 +19,7 @@ const GuestDisplayColumns = ({ guests }: { guests: Guest[] }) => {
             // onClick={() => updateGuestActivity(guest.id, getRandomActivity())}
           >
             <GuestDisplay guest={guest} />
+            <div className="">{renderRef.current}</div>
           </div>
         );
       })}
@@ -44,17 +41,22 @@ const GuestDisplay = ({ guest }: { guest: Guest }) => (
 
 const GuestDisplayThumbnail = () => {
   const guests = useStore((state) => state.guests);
+  const guestsRef = useRef(guests);
+  guestsRef.current = guests;
+
   const tick = useStore((state) => state.tick);
+  const tickRef = useRef(tick);
+  tickRef.current = tick;
 
   return (
-    <div className="flex h-12 w-12 select-none items-center justify-center rounded-md bg-stone-800 align-middle hover:bg-stone-400">
+    <div className="flex h-12 w-auto select-none items-center justify-center rounded-md bg-stone-800 align-middle hover:bg-stone-400">
       <div className="">
         <div className="">
-          <span className="pr-1 text-lg">{guests.length}</span>
+          <span className="pr-1 text-lg">{guestsRef.current.length}</span>
           <span className="text-md ">👤</span>
         </div>
         <div>
-          <span className="text-xs">Tick: {tick}</span>
+          <span className="text-xs">Tick: {tickRef.current}</span>
         </div>
       </div>
     </div>
@@ -74,13 +76,18 @@ const NextTickButton = () => {
 
 const PlayPage: NextPage = () => {
   const guests = useStore((state) => state.guests);
+  const guestsRef = useRef(guests);
+  guestsRef.current = guests;
 
   return (
-    <div className="max max-w-[400px] bg-stone-600">
-      <div className="h-screen justify-end p-2">
-        <GuestDisplayThumbnail />
-        <NextTickButton />
-        <GuestDisplayColumns guests={guests} />
+    <div className="">
+      <GameController />
+      <div className="max max-w-[400px] bg-stone-600">
+        <div className="h-screen justify-end p-2">
+          <GuestDisplayThumbnail />
+          <NextTickButton />
+          <GuestDisplayColumns guests={guestsRef.current} />
+        </div>
       </div>
     </div>
   );
