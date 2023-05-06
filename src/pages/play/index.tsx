@@ -6,6 +6,53 @@ import { GameController } from "~/stores/slices/gameController";
 import { useRef } from "react";
 import { type Upgrade } from "~/stores/slices/upgradeSlice";
 
+const GuestStatBar = ({
+  value,
+  impact,
+  text,
+}: {
+  value: number;
+  impact: "positive" | "negative";
+  text: string;
+}) => {
+  return (
+    <div className=" my-1 block ">
+      <div className="inline-flex w-full">
+        <div className=" w-8">{text}</div>
+        <div className="w-11/12 rounded-sm  border-2 border-b-stone-700 border-l-stone-900 border-r-stone-700 border-t-stone-900 bg-stone-300">
+          <div
+            className={` h-full ${
+              value > 0
+                ? impact === "negative"
+                  ? "border-2 border-b-rose-700 border-l-rose-900 border-r-rose-700 border-t-rose-900 bg-rose-700"
+                  : "border-2 border-b-green-400 border-l-green-600 border-r-green-400 border-t-green-600 bg-green-500"
+                : ""
+            }`}
+            style={{ width: `${clamp(value * 10, 0, 100)}%` }}
+          ></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const GuestStatDisplay = ({ guest }: { guest?: Guest }) => {
+  return (
+    <div>
+      <GuestStatBar
+        value={guest?.happiness ?? 10}
+        impact="positive"
+        text="😊"
+      />
+      <GuestStatBar value={guest?.energy ?? 10} impact="positive" text="🏃🏼‍♂️" />
+      <GuestStatBar value={guest?.hunger ?? 3.9} impact="negative" text="🥗" />
+      <GuestStatBar value={guest?.thirst ?? 4} impact="negative" text="🥤" />
+      <GuestStatBar value={guest?.nausea ?? 4.1} impact="negative" text="🤢" />
+      <GuestStatBar value={guest?.toilet ?? 4.3} impact="negative" text="🚽" />
+    </div>
+  );
+};
+
 const UpgradeDisplay = ({ upgrade }: { upgrade: Upgrade }) => {
   const money = useStore((state) => state.money);
 
@@ -146,6 +193,7 @@ const PlayPage: NextPage = () => {
           <GuestDisplayThumbnail />
           <NextTickButton />
           <GuestGenerationRateDisplay />
+          <GuestStatDisplay guest={guests[0]} />
           <UpgradeDisplayColumns upgrades={upgrades} />
           <GuestDisplayColumns guests={guestsRef.current} />
         </div>
@@ -155,3 +203,7 @@ const PlayPage: NextPage = () => {
 };
 
 export default PlayPage;
+
+export const clamp = (value: number, min: number, max: number) => {
+  return Math.min(Math.max(value, min), max);
+};
