@@ -1,4 +1,3 @@
-import { type SliceState } from "../middlewares"
 
 // create one type for the state - e.g. GuestState
 export interface GuestState {

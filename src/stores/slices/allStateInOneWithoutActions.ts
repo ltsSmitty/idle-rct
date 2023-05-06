@@ -14,13 +14,17 @@ import { GuestState, initialGuestState } from "./guestSlice";
 import { GameState, initialGameState } from "./gameSlice";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { UpgradeState, initialUpgradeState } from "./upgradeSlice";
+import { MoneyState, initialMoneyState } from "./moneySlice";
 
 
 type StoreState = GuestGenerationState &
     GuestGenerationRateState &
 { guestGenerationStats: GuestGenerationStatsState } &
     GuestState &
-    GameState;
+    GameState &
+    UpgradeState &
+    MoneyState
 
 export const useStore = create<StoreState>()(immer(devtools(() => ({
     ...initialGuestGenerationState,
@@ -29,4 +33,6 @@ export const useStore = create<StoreState>()(immer(devtools(() => ({
     guestGenerationStats: initialGuestGenerationStateValues,
     ...initialGuestState,
     ...initialGameState,
+    ...initialUpgradeState,
+    ...initialMoneyState
 }))));

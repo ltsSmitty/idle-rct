@@ -1,17 +1,65 @@
 import { type NextPage } from "next";
 import { useStore } from "~/stores/slices/allStateInOneWithoutActions";
 import { GuestActivity } from "~/types/GuestActivity";
-import doTick from "~/stores/slices/allStoreActions";
+import actions from "~/stores/slices/allStoreActions";
 import { GameController } from "~/stores/slices/gameController";
 import { useRef } from "react";
+import { type Upgrade } from "~/stores/slices/upgradeSlice";
+
+const UpgradeDisplay = ({ upgrade }: { upgrade: Upgrade }) => {
+  const money = useStore((state) => state.money);
+
+  const acquireIfPossible = () => {
+    if (upgrade.isAcquired) {
+      console.log("already acquired");
+      return;
+    }
+    // if (upgrade.cost > money) {
+    //   console.log("not enough money");
+    //   return;
+    // }
+    console.log(`acquiring ${upgrade.name}`);
+    actions.acquireUpgrade(upgrade);
+  };
+
+  return (
+    <div
+      className={`flex flex-col items-center justify-center ${
+        upgrade.isAcquired ? "bg-stone-400" : "bg-stone-800"
+      } m-2 cursor-pointer rounded-md p-2 ${
+        upgrade.cost > money ? "opacity-50" : ""
+      }`}
+      onClick={() => acquireIfPossible()}
+    >
+      <div className="text-lg font-bold">{upgrade.name}</div>
+      <div className="text-sm">Cost: {upgrade.cost}</div>
+      <div className="text-sm"> {upgrade.description}</div>
+    </div>
+  );
+};
+
+const UpgradeDisplayColumns = ({ upgrades }: { upgrades: Upgrade[] }) => {
+  return (
+    <div className="flex flex-wrap">
+      {upgrades.map((upgrade) => {
+        return (
+          <div key={upgrade.name} className="w-1/2 flex-none select-none">
+            <UpgradeDisplay upgrade={upgrade} />
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 const GuestDisplayColumns = ({ guests }: { guests: Guest[] }) => {
   const renderRef = useRef(1);
   renderRef.current++;
+  console.log(guests, JSON.stringify(guests));
 
   return (
     <div className="flex flex-wrap">
-      {guests.map((guest) => {
+      {guests?.map((guest) => {
         return (
           <div
             key={guest.id}
@@ -67,14 +115,25 @@ const NextTickButton = () => {
   return (
     <button
       className="my-2 flex h-10 w-10 items-center justify-center rounded-md bg-stone-800 pr-1 align-middle text-lg hover:bg-stone-400"
-      onClick={doTick}
+      onClick={actions.doTick}
     >
       👉
     </button>
   );
 };
 
+const GuestGenerationRateDisplay = () => {
+  const guestGenerationRate = useStore((state) => state.rate);
+  return (
+    <div className="flex h-12 w-auto select-none items-center justify-center rounded-md bg-stone-800 align-middle hover:bg-stone-400">
+      <span className="pr-1 text-lg">{guestGenerationRate}</span>
+      <span className="text-md ">% chance 👤/tick</span>
+    </div>
+  );
+};
+
 const PlayPage: NextPage = () => {
+  const upgrades = useStore((state) => state.upgrades);
   const guests = useStore((state) => state.guests);
   const guestsRef = useRef(guests);
   guestsRef.current = guests;
@@ -86,6 +145,8 @@ const PlayPage: NextPage = () => {
         <div className="h-screen justify-end p-2">
           <GuestDisplayThumbnail />
           <NextTickButton />
+          <GuestGenerationRateDisplay />
+          <UpgradeDisplayColumns upgrades={upgrades} />
           <GuestDisplayColumns guests={guestsRef.current} />
         </div>
       </div>
