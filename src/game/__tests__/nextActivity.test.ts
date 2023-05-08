@@ -1,12 +1,14 @@
+import { getNextGuestActivity } from './../gameplay/getNextGuestActivity';
 import { GuestActivity } from "~/stores/slices/activityEffectSlice";
 import generateGuestsFromStats from "../gameplay/generateGuests"
 import { useStore } from "~/stores/slices/allStateInOneWithoutActions"
-import { getNextGuestActivity } from "~/stores/slices/nextActivityState"
+
 
 
 test(`guest can change activity`, () => {
     const { guestGenerationStats, guestGenerationLocation, nextGuestId } = useStore.getState();
-    const guests = generateGuestsFromStats({ guestStats: guestGenerationStats, guestGenerationLocation, firstNextGuestId: nextGuestId, numberOfGuestsToGenerate: 2 })
+    // guestGenerationStats.nausea = { value: 10, delta: 0 };
+    const guests = generateGuestsFromStats({ guestStats: { ...guestGenerationStats, }, guestGenerationLocation, firstNextGuestId: nextGuestId, numberOfGuestsToGenerate: 1 })
 
     const activityHistory: GuestActivity[] = [];
     activityHistory.push(guests.newGuests[0]?.currentActivity ?? GuestActivity["GONE"])
@@ -14,8 +16,10 @@ test(`guest can change activity`, () => {
     console.log("initial activities:", guests.newGuests.map(g => g.currentActivity))
 
     for (let i = 0; i < 50; i++) {
-        activityHistory.push(getNextGuestActivity(guests.newGuests[0] ?? {} as Guest).activity)
+        const nextGuestActivity = getNextGuestActivity(guests.newGuests[0] ?? {} as Guest).activity
+        guests.newGuests[0] ? guests.newGuests[0].currentActivity = nextGuestActivity : null;
+        activityHistory.push(nextGuestActivity)
     }
 
-    console.log(`50 activities: ${JSON.stringify(activityHistory, null, 2)}`)
+    console.log(`10 activities: ${JSON.stringify(activityHistory, null, 2)}`)
 })

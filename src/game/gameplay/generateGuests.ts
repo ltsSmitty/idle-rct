@@ -81,9 +81,17 @@ type ModifierValue = {
     delta: number;
 }
 
-const calculateModifierValue = (modifier: ModifierValue) => {
-    return Math.min(10, // clamp <= 10
-        Math.max(0, // clamp >= 0
+
+/**
+ * Calculates a random value for a given modifier within a specified range.
+ * @param modifier The modifier value to calculate.
+ * @param max The maximum value that the modifier can be. Defaults to 10.
+ * @param min The minimum value that the modifier can be. Defaults to 0.
+ * @returns A random value for the modifier within the specified range.
+ */
+export const calculateModifierValue = (modifier: ModifierValue, max = 10, min = 0) => {
+    return Math.min(max, // clamp <= 10
+        Math.max(min, // clamp >= 0
             modifier.value + (Math.random() * modifier.delta * 2) - modifier.delta))
 }
 

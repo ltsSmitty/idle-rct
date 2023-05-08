@@ -1,9 +1,10 @@
-import { GuestActivity } from "./activityEffectSlice";
+import { GuestActivity } from "~/stores/slices/activityEffectSlice";
 
 type GuestGameStat = Pick<Guest, "energy" | "happiness" | "nausea" | "thirst" | "toilet" | "hunger">
+
 type ActivityWeights = Partial<Record<GuestActivity, number>>
 
-
+/** Activities that will be chosen from if the guest is not in the middle of another activity, or adversely impacted by negative stats. */
 const baseActivityWeights: ActivityWeights = {
     [GuestActivity.WALKING_TO_RIDE]: 5,
     [GuestActivity.WANDERING]: .5,
@@ -13,12 +14,12 @@ const baseActivityWeights: ActivityWeights = {
     [GuestActivity.SITTING]: 1,
 }
 
-/** If a negative stat gets this high, it'll start adversely weighing into their decision making */
+/** If a negative stat gets at least this high, it'll start adversely weighing into their decision making */
 const NEGATIVE_IMPACT_THRESHOLD_LOW = 7;
 const NEGATIVE_IMPACT_THRESHOLD_MED = 8;
 const NEGATIVE_IMPACT_THRESHOLD_HIGH = 9;
 
-/** If a positive stat gets this low, it'll start adversely weighing into their decision making */
+/** If a positive stat gets at least this low, it'll start adversely weighing into their decision making */
 const POSITIVE_IMPACT_THRESHOLD_LOW = 3;
 const POSITIVE_IMPACT_THRESHOLD_MED = 2;
 const POSITIVE_IMPACT_THRESHOLD_HIGH = 1;
@@ -68,6 +69,16 @@ const getAdverseImpactedActivities = (guest: Guest): AdverseEffects => {
     return adverselyImpactedActivities;
 }
 
+/**
+ * Check if the guest has any adverse impacts on their stats that would affect their next activity choice, such as low energy/happiness or high nausea/hunger/thirst/toilet.
+ * @param guest - The guest to check for adverse impacts.
+ * @returns A boolean indicating whether the guest has any adverse impacts on their stats.
+ */
+export const guestHasAdverseImpacts = (guest: Guest): boolean => {
+    const adverseImpacts = getAdverseImpactedActivities(guest);
+    return Object.keys(adverseImpacts).length > 0;
+}
+
 /** Compute the next activity for the guest based on their current stats.
  * Having stats in a negative zone (e.g happiness too low, toilet too high) will result in weighing more heavily toward the corresponding events, (e.g. buying food, vomiting, leaving the park). @returns the next chosen activity.
 */
@@ -78,7 +89,9 @@ export const getNextGuestActivity = (guest: Guest): { activity: GuestActivity } 
 
     // if their current activity isnt' interruptable, just call weighted random instead of considering adverse impacts
     if (!interruptable) {
+        console.log(`${currentActivity} not interruptable`)
         const nextActivity = weightedRandom(weights);
+        console.log(`${nextActivity} chosen next`)
         return { activity: nextActivity };
     }
 
@@ -91,11 +104,14 @@ export const getNextGuestActivity = (guest: Guest): { activity: GuestActivity } 
         return { activity: nextActivity };
     }
 
-    console.log(`There are negative stats influencing this guest: ${JSON.stringify(Object.keys(adverseImpactActivities))}`)
 
+    console.log(`There are negative stats influencing this guest: ${JSON.stringify(Object.keys(adverseImpactActivities))}`)
     // Do adverse activity change
     // Add the adverse events weight to weights
     const negativeWeights = Object.entries(adverseImpactActivities).map(([stat, effect]) => getNegativeImpactWeight(stat as keyof GuestGameStat, effect.impact));
+
+    console.log(`The negative weights are: ${JSON.stringify(negativeWeights, null, 2)}`)
+
     const combinedWeights = negativeWeights.reduce((acc, curr) => {
         Object.entries(curr).forEach(([activity, weight]) => {
             (acc[activity as GuestActivity])
@@ -104,7 +120,9 @@ export const getNextGuestActivity = (guest: Guest): { activity: GuestActivity } 
                 : acc[activity as GuestActivity] = weight;
         });
         return acc;
-    }, weights);
+    }, { ...weights });
+
+    console.log(`The combined weights are: ${JSON.stringify(combinedWeights, null, 2)}`)
 
     const nextActivity = weightedRandom(combinedWeights);
     return { activity: nextActivity };
@@ -173,9 +191,11 @@ const weightedRandom = (weights: ActivityWeights): GuestActivity => {
 
     // skip all the math if there's only one weight
     if (Object.keys(weights).length === 1) {
+        console.log(`only one activity to choose from: ${Object.keys(weights)[0] ?? ""}`)
         return Object.keys(weights)[0] as GuestActivity;
     }
 
+    console.log(`potential next action options:  ${JSON.stringify(Object.keys(weights))}`)
     const totalWeight = Object.values(weights).reduce((acc, weight) => acc + weight, 0);
     const random = Math.random() * totalWeight;
     let weightSum = 0;
@@ -270,4 +290,8 @@ const nextActivityWeight: Record<GuestActivity, { weights: ActivityWeights, inte
         weights: { ...baseActivityWeights },
         interruptable: false
     },
+}
+
+export const canActivityBeInterrupted = (activity: GuestActivity): boolean => {
+    return nextActivityWeight[activity].interruptable;
 }

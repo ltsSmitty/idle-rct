@@ -10,7 +10,9 @@ import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { UpgradeState, initialUpgradeState } from "./upgradeSlice";
 import { MoneyState, initialMoneyState } from "./moneySlice";
-import { type GuestActivityEffectState, initialGuestActivityEffectState } from "./activityEffectSlice"
+import { type GuestActivityEffectState, initialGuestActivityEffectState } from "./activityEffectSlice";
+import { ActivityLengthState, initialActivityLengthState } from "./activityLengthSlice";
+import { ActivityChanceToSwitchState, initialActivityChanceToSwitchState } from "./activityChanceToSwitchSlice";
 
 
 type StoreState = GuestGenerationState &
@@ -21,7 +23,9 @@ type StoreState = GuestGenerationState &
     GameState &
     UpgradeState &
     MoneyState &
-{ activityEffectStats: GuestActivityEffectState }
+{ activityEffectStats: GuestActivityEffectState } &
+{ activityLengthStats: ActivityLengthState } &
+{ activityChanceToSwitchActivitiesStats: ActivityChanceToSwitchState }
 
 export const useStore = create<StoreState>()(immer(devtools(() => ({
     ...initialGuestGenerationState,
@@ -32,5 +36,7 @@ export const useStore = create<StoreState>()(immer(devtools(() => ({
     ...initialGameState,
     ...initialUpgradeState,
     ...initialMoneyState,
-    activityEffectStats: initialGuestActivityEffectState
+    activityEffectStats: initialGuestActivityEffectState,
+    activityLengthStats: initialActivityLengthState,
+    activityChanceToSwitchActivitiesStats: initialActivityChanceToSwitchState
 }))));
