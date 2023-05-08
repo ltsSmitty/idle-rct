@@ -46,7 +46,7 @@ const GuestStatBar = ({
           </TooltipTrigger>
           <TooltipContent className=" absolute left-0  my-0.5 h-10 border-2 border-transparent">
             <p className="whitespace-nowrap">
-              {alt}: {value.toFixed(1)}
+              {alt}: {clamp(Number(value.toFixed(1)), 0, 10)}
             </p>
           </TooltipContent>
         </Tooltip>
@@ -94,6 +94,7 @@ const GuestStatDisplay = ({ guest }: { guest?: Guest }) => {
         text="🚽"
         alt="Toilet"
       />
+      <div className="">⏱️ {guest?.ticksTilActivityChange}</div>
     </div>
   );
 };
