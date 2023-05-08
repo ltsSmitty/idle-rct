@@ -1,9 +1,3 @@
-// MVP to see what needs to happen to advance a tick and generate guests
-// needs ticks
-// needs all the guest generation stats
-// needs guest generation rate
-// needs the guest generator
-
 import { create } from "zustand";
 import { GuestGenerationState, initialGuestGenerationState } from "./guestGenerationSlice";
 import { GuestGenerationRateState, initialGuestGenerationRateState } from "./guestGenerationRateSlice";
@@ -16,15 +10,18 @@ import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { UpgradeState, initialUpgradeState } from "./upgradeSlice";
 import { MoneyState, initialMoneyState } from "./moneySlice";
+import { type GuestActivityEffectState, initialGuestActivityEffectState } from "./activityEffectSlice"
 
 
 type StoreState = GuestGenerationState &
     GuestGenerationRateState &
+// don't want to pollute the store with too many individual values, so keeping these stats non-destructured
 { guestGenerationStats: GuestGenerationStatsState } &
     GuestState &
     GameState &
     UpgradeState &
-    MoneyState
+    MoneyState &
+{ activityEffectStats: GuestActivityEffectState }
 
 export const useStore = create<StoreState>()(immer(devtools(() => ({
     ...initialGuestGenerationState,
@@ -34,5 +31,6 @@ export const useStore = create<StoreState>()(immer(devtools(() => ({
     ...initialGuestState,
     ...initialGameState,
     ...initialUpgradeState,
-    ...initialMoneyState
+    ...initialMoneyState,
+    activityEffectStats: initialGuestActivityEffectState
 }))));

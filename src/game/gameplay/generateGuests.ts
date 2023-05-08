@@ -1,5 +1,5 @@
 import { type GuestGenerationStatsState } from "~/stores/slices/guestGenerationStatsSlice";
-import { GuestActivity } from "~/types/GuestActivity";
+import { GuestActivity } from "~/stores/slices/activityEffectSlice";
 
 /** The range + and - from the Guest's chosen intensityPreferenceRange and nauseaTolleranceRange */
 const BOUNDED_PROPERTY_RANGE = 1.5;
@@ -66,6 +66,7 @@ const generateGuest = (props: {
             upperBound: nauseaMidpoint + BOUNDED_PROPERTY_RANGE
         },
         currentActivity: startingActivity ?? STARTING_GUEST_ACTIVITY,
+        nextActivity: startingActivity ?? null,
         ticksTilActivityChange: -1
     }
     return newGuest;

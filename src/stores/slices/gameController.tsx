@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import actions from "~/stores/slices/allStoreActions";
+import { doTick } from "~/stores/actions";
 
 const TICK_LENGTH_MS = 400;
 
@@ -10,13 +10,13 @@ export const GameController = () => {
   // Kick off a render-loop which mutates all state objects/each frame
   useEffect(() => {
     let lastCalledTime = Date.now();
-    const timer = requestAnimationFrame(function renderLoop() {
+    const _timer = requestAnimationFrame(function renderLoop() {
       const interval = Date.now() - lastCalledTime;
 
       if (interval > TICK_LENGTH_MS && !isPaused) {
         ref.current ? (ref.current.innerText = `${interval}`) : null;
         lastCalledTime = Date.now();
-        actions.doTick();
+        doTick();
       }
       requestAnimationFrame(renderLoop);
     });

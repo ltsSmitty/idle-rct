@@ -66,6 +66,7 @@ interface Guest {
     nauseaToleranceRange: BoundedProperty
 
     currentActivity: GuestActivity;
+    nextActivity: GuestActivity | null;
     ticksTilActivityChange: number;
 }
 

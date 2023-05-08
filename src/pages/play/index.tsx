@@ -1,7 +1,6 @@
 import { type NextPage } from "next";
 import { useStore } from "~/stores/slices/allStateInOneWithoutActions";
-import { GuestActivity } from "~/types/GuestActivity";
-import actions from "~/stores/slices/allStoreActions";
+import { doTick, acquireUpgrade } from "~/stores/actions";
 import { GameController } from "~/stores/slices/gameController";
 import { useRef } from "react";
 import { type Upgrade } from "~/stores/slices/upgradeSlice";
@@ -47,7 +46,7 @@ const GuestStatBar = ({
           </TooltipTrigger>
           <TooltipContent className=" absolute left-0  my-0.5 h-10 border-2 border-transparent">
             <p className="whitespace-nowrap">
-              {alt}: {value}
+              {alt}: {value.toFixed(1)}
             </p>
           </TooltipContent>
         </Tooltip>
@@ -112,7 +111,8 @@ const UpgradeDisplay = ({ upgrade }: { upgrade: Upgrade }) => {
     //   return;
     // }
     console.log(`acquiring ${upgrade.name}`);
-    actions.acquireUpgrade(upgrade);
+
+    acquireUpgrade(upgrade);
   };
 
   return (
@@ -148,7 +148,6 @@ const UpgradeDisplayColumns = ({ upgrades }: { upgrades: Upgrade[] }) => {
 const GuestDisplayColumns = ({ guests }: { guests: Guest[] }) => {
   const renderRef = useRef(1);
   renderRef.current++;
-  console.log(guests, JSON.stringify(guests));
 
   return (
     <div className="flex flex-wrap">
@@ -208,7 +207,7 @@ const NextTickButton = () => {
   return (
     <button
       className="my-2 flex h-10 w-10 items-center justify-center rounded-md bg-stone-800 pr-1 align-middle text-lg hover:bg-stone-400"
-      onClick={actions.doTick}
+      onClick={doTick}
     >
       👉
     </button>
@@ -219,7 +218,7 @@ const GuestGenerationRateDisplay = () => {
   const guestGenerationRate = useStore((state) => state.rate);
   return (
     <div className="flex h-12 w-auto select-none items-center justify-center rounded-md bg-stone-800 align-middle hover:bg-stone-400">
-      <span className="pr-1 text-lg">{guestGenerationRate}</span>
+      <span className="pr-1 text-lg">{guestGenerationRate.toFixed(2)}</span>
       <span className="text-md ">% chance 👤/tick</span>
     </div>
   );

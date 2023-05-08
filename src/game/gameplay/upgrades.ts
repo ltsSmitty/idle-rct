@@ -36,5 +36,23 @@ export const exampleUpgrades: Upgrade[] = [
             }
         },
         isAcquired: false
+    },
+    {
+        name: 'Super Fancy Advertising',
+        description: 'Get a large boost in interest for your park.',
+        cost: 1000,
+        effects: {
+            generationRate: {
+                value: {
+                    multiplier: 1,
+                    addend: 100
+                },
+                delta: {
+                    multiplier: 1,
+                    addend: 0
+                }
+            }
+        },
+        isAcquired: false
     }
 ]

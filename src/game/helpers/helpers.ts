@@ -1,6 +1,9 @@
 export const calculateGuestsToGenerate = (rate: number) => {
-    // doing 1 - Math.random so that we get 1 included in the range
-    const generatedValue = (rate * (1 - Number(Math.random().toFixed(2))));
-    console.log(`Generated value: ${generatedValue}`)
-    return Math.floor(generatedValue)
+    let num = 0;
+    while (rate > 0) {
+        const rand = Math.random() * 100;
+        if (rand <= rate) { num++ }
+        rate -= 100;
+    }
+    return num;
 }

@@ -4,7 +4,7 @@ export interface GuestGenerationRateState {
 }
 
 export const initialGuestGenerationRateState: GuestGenerationRateState = {
-    rate: 1,
+    rate: 5,
 }
 
 interface GuestGenerationRateActions {
