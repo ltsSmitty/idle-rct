@@ -1,17 +1,17 @@
 import { type GuestGenerationStatsState } from "~/stores/slices/guestGenerationStatsSlice";
-import { GuestActivity } from "~/stores/slices/activityEffectSlice";
+import { GuestActivity, GuestActivityKey } from "~/stores/slices/activityEffectSlice";
 
 /** The range + and - from the Guest's chosen intensityPreferenceRange and nauseaTolleranceRange */
 const BOUNDED_PROPERTY_RANGE = 1.5;
 
-const STARTING_GUEST_ACTIVITY = GuestActivity.WALKING_TO_PARK_ENTRANCE
+const STARTING_GUEST_ACTIVITY: GuestActivityKey = "WALKING_TO_PARK_ENTRANCE"
 
 export const generateGuestsFromStats = (props: {
     guestStats: GuestGenerationStatsState,
     guestGenerationLocation: CoordsXYZ,
     /** The next id number to be assigned. Automatically increments from there based on number of guests generated. */
     firstNextGuestId: number,
-    startingActivity?: GuestActivity
+    startingActivity?: GuestActivityKey
     numberOfGuestsToGenerate: number
 }): { newGuests: Guest[], nextGuestId: number } => {
     const { guestStats, guestGenerationLocation, firstNextGuestId, startingActivity, numberOfGuestsToGenerate } = props;
@@ -38,7 +38,7 @@ const generateGuest = (props: {
     guestStats: GuestGenerationStatsState,
     guestGenerationLocation: CoordsXYZ,
     guestId: number,
-    startingActivity?: GuestActivity
+    startingActivity?: GuestActivityKey
 }): Guest => {
     const { guestStats, guestGenerationLocation, startingActivity, guestId } = props;
 
@@ -50,12 +50,12 @@ const generateGuest = (props: {
         name: `Guest ${guestId}`,
         location: guestGenerationLocation,
 
-        hunger: calculateModifierValue(guestStats.hunger),
-        thirst: calculateModifierValue(guestStats.thirst),
-        happiness: calculateModifierValue(guestStats.happiness),
-        nausea: calculateModifierValue(guestStats.nausea),
-        toilet: calculateModifierValue(guestStats.toilet),
-        energy: calculateModifierValue(guestStats.energy),
+        hunger: calculateModifierValue(guestStats.hunger, 100),
+        thirst: calculateModifierValue(guestStats.thirst, 100),
+        happiness: calculateModifierValue(guestStats.happiness, 100),
+        nausea: calculateModifierValue(guestStats.nausea, 100),
+        toilet: calculateModifierValue(guestStats.toilet, 100),
+        energy: calculateModifierValue(guestStats.energy, 100),
 
         intensityPreferenceRange: {
             lowerBound: intensityMidpoint - BOUNDED_PROPERTY_RANGE,

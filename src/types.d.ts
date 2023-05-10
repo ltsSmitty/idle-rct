@@ -49,6 +49,7 @@ type BoundedProperty = {
     lowerBound: number;
     upperBound: number;
 }
+type GuestActivityKey = keyof typeof GuestActivity
 
 interface Guest {
     id: number;
@@ -65,8 +66,8 @@ interface Guest {
     intensityPreferenceRange: BoundedProperty
     nauseaToleranceRange: BoundedProperty
 
-    currentActivity: GuestActivity;
-    nextActivity: GuestActivity | null;
+    currentActivity: GuestActivityKey;
+    nextActivity: GuestActivityKey | null;
     ticksTilActivityChange: number;
 }
 

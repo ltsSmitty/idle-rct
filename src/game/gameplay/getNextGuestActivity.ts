@@ -1,17 +1,17 @@
-import { GuestActivity } from "~/stores/slices/activityEffectSlice";
+import { GuestActivityKey } from "~/stores/slices/activityEffectSlice";
 
 type GuestGameStat = Pick<Guest, "energy" | "happiness" | "nausea" | "thirst" | "toilet" | "hunger">
 
-type ActivityWeights = Partial<Record<GuestActivity, number>>
+type ActivityWeights = Partial<Record<GuestActivityKey, number>>
 
 /** Activities that will be chosen from if the guest is not in the middle of another activity, or adversely impacted by negative stats. */
 const baseActivityWeights: ActivityWeights = {
-    [GuestActivity.WALKING_TO_RIDE]: 5,
-    [GuestActivity.WANDERING]: .5,
-    [GuestActivity.WATCHING_RIDE]: 2,
-    [GuestActivity.WATCHING_CONSTRUCTION]: 1,
-    [GuestActivity.WALKING_TO_PARK_EXIT]: .2,
-    [GuestActivity.SITTING]: 1,
+    WALKING_TO_RIDE: 5,
+    WANDERING: .5,
+    WATCHING_RIDE: 2,
+    WATCHING_CONSTRUCTION: 1,
+    WALKING_TO_PARK_EXIT: .2,
+    SITTING: 1,
 }
 
 /** If a negative stat gets at least this high, it'll start adversely weighing into their decision making */
@@ -82,7 +82,7 @@ export const guestHasAdverseImpacts = (guest: Guest): boolean => {
 /** Compute the next activity for the guest based on their current stats.
  * Having stats in a negative zone (e.g happiness too low, toilet too high) will result in weighing more heavily toward the corresponding events, (e.g. buying food, vomiting, leaving the park). @returns the next chosen activity.
 */
-export const getNextGuestActivity = (guest: Guest): { activity: GuestActivity } => {
+export const getNextGuestActivity = (guest: Guest): { activity: GuestActivityKey } => {
     const { currentActivity } = guest;
 
     const { weights, interruptable } = nextActivityWeight[currentActivity];
@@ -114,10 +114,10 @@ export const getNextGuestActivity = (guest: Guest): { activity: GuestActivity } 
 
     const combinedWeights = negativeWeights.reduce((acc, curr) => {
         Object.entries(curr).forEach(([activity, weight]) => {
-            (acc[activity as GuestActivity])
+            (acc[activity as GuestActivityKey])
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                ? acc[activity as GuestActivity]! += weight
-                : acc[activity as GuestActivity] = weight;
+                ? acc[activity as GuestActivityKey]! += weight
+                : acc[activity as GuestActivityKey] = weight;
         });
         return acc;
     }, { ...weights });
@@ -140,40 +140,40 @@ const getNegativeImpactWeight = (stat: keyof GuestGameStat, impact: NegativeImpa
     switch (stat) {
         case "energy":
             return {
-                [GuestActivity.SITTING]: weight,
-                [GuestActivity.WALKING_TO_PARK_EXIT]: weight / 2,
+                SITTING: weight,
+                WALKING_TO_PARK_EXIT: weight / 2,
             }
         case "happiness":
             return {
-                [GuestActivity.WALKING_TO_RIDE]: weight,
-                [GuestActivity.WANDERING]: weight,
-                [GuestActivity.WATCHING_RIDE]: weight,
-                [GuestActivity.WALKING_TO_PARK_EXIT]: weight / 2,
+                WALKING_TO_RIDE: weight,
+                WANDERING: weight,
+                WATCHING_RIDE: weight,
+                WALKING_TO_PARK_EXIT: weight / 2,
             }
         case "hunger":
             return {
-                [GuestActivity.WALKING_TO_SHOP]: weight,
-                [GuestActivity.WALKING_TO_PARK_EXIT]: weight / 4,
+                WALKING_TO_SHOP: weight,
+                WALKING_TO_PARK_EXIT: weight / 4,
 
             }
         case "thirst":
             return {
-                [GuestActivity.WALKING_TO_SHOP]: weight,
-                [GuestActivity.WALKING_TO_PARK_EXIT]: weight / 4,
+                WALKING_TO_SHOP: weight,
+                WALKING_TO_PARK_EXIT: weight / 4,
 
             }
         case "nausea":
             return {
-                [GuestActivity.WALKING_TO_TOILET]: weight,
-                [GuestActivity.VOMITING]: weight,
-                [GuestActivity.SITTING]: weight,
-                [GuestActivity.WALKING_TO_PARK_EXIT]: weight / 4,
+                WALKING_TO_TOILET: weight,
+                VOMITING: weight,
+                SITTING: weight,
+                WALKING_TO_PARK_EXIT: weight / 4,
 
             }
         case "toilet":
             return {
-                [GuestActivity.WALKING_TO_TOILET]: weight,
-                [GuestActivity.WALKING_TO_PARK_EXIT]: weight / 6,
+                WALKING_TO_TOILET: weight,
+                WALKING_TO_PARK_EXIT: weight / 6,
             }
     }
 }
@@ -183,16 +183,16 @@ const getNegativeImpactWeight = (stat: keyof GuestGameStat, impact: NegativeImpa
  * @param weights - An object containing weights for each activity.
  * @returns A random activity based on the given weights.
  */
-const weightedRandom = (weights: ActivityWeights): GuestActivity => {
+const weightedRandom = (weights: ActivityWeights): GuestActivityKey => {
     if (Object.keys(weights).length === 0) {
         console.error(`Weighted random called with no weights`);
-        return GuestActivity.WANDERING;
+        return "WANDERING"
     }
 
     // skip all the math if there's only one weight
     if (Object.keys(weights).length === 1) {
         console.log(`only one activity to choose from: ${Object.keys(weights)[0] ?? ""}`)
-        return Object.keys(weights)[0] as GuestActivity;
+        return Object.keys(weights)[0] as GuestActivityKey;
     }
 
     console.log(`potential next action options:  ${JSON.stringify(Object.keys(weights))}`)
@@ -202,96 +202,96 @@ const weightedRandom = (weights: ActivityWeights): GuestActivity => {
     for (const [activity, weight] of Object.entries(weights)) {
         weightSum += weight;
         if (random < weightSum) {
-            return activity as GuestActivity;
+            return activity as GuestActivityKey;
         }
     }
     console.error(`Weighted random failed for ${JSON.stringify(weights)}`);
-    return GuestActivity.WANDERING;
+    return "WANDERING";
 }
 
 /** For any given activity, what are the next potential activities that could be chosen */
-const nextActivityWeight: Record<GuestActivity, { weights: ActivityWeights, interruptable: boolean }> = {
+const nextActivityWeight: Record<GuestActivityKey, { weights: ActivityWeights, interruptable: boolean }> = {
     // ride cycle: walk to ride, wait in line, walk to ride entrance, ride ride, walk to ride exit, walk to park exit
-    [GuestActivity.WALKING_TO_RIDE]: {
-        weights: { [GuestActivity.WAITING_IN_LINE]: 1 },
+    WALKING_TO_RIDE: {
+        weights: { WAITING_IN_LINE: 1 },
         interruptable: true
     },
-    [GuestActivity.WAITING_IN_LINE]: {
-        weights: { [GuestActivity.WALKING_TO_RIDE_ENTRANCE]: 1 },
+    WAITING_IN_LINE: {
+        weights: { WALKING_TO_RIDE_ENTRANCE: 1 },
         interruptable: false
     },
-    [GuestActivity.WALKING_TO_RIDE_ENTRANCE]: {
-        weights: { [GuestActivity.RIDING_RIDE]: 1 },
+    WALKING_TO_RIDE_ENTRANCE: {
+        weights: { RIDING_RIDE: 1 },
         interruptable: false
     },
-    [GuestActivity.RIDING_RIDE]: {
-        weights: { [GuestActivity.WALKING_TO_RIDE_EXIT]: 1 },
+    RIDING_RIDE: {
+        weights: { WALKING_TO_RIDE_EXIT: 1 },
         interruptable: false
     },
-    [GuestActivity.WALKING_TO_RIDE_EXIT]: {
+    WALKING_TO_RIDE_EXIT: {
         weights: { ...baseActivityWeights },
         interruptable: false
     },
 
     // park exit cycle: walk to park exit, gone
-    [GuestActivity.WALKING_TO_PARK_EXIT]: {
-        weights: { [GuestActivity.GONE]: 1 },
+    WALKING_TO_PARK_EXIT: {
+        weights: { GONE: 1 },
         interruptable: true
     },
-    [GuestActivity.GONE]: {
-        weights: { [GuestActivity.GONE]: 1 }, // they always stay gone
+    GONE: {
+        weights: { GONE: 1 }, // they always stay gone
         interruptable: false
     },
 
-    [GuestActivity.WALKING_TO_TOILET]: {
-        weights: { [GuestActivity.USING_TOILET]: 1 },
+    WALKING_TO_TOILET: {
+        weights: { USING_TOILET: 1 },
         interruptable: false
     },
 
-    [GuestActivity.WALKING_TO_SHOP]: {
-        weights: { [GuestActivity.EATING]: 1, [GuestActivity.DRINKING]: 1 },
+    WALKING_TO_SHOP: {
+        weights: { EATING: 1, DRINKING: 1 },
         interruptable: false
     },
 
     // any of these activities can lead to any other general activity
-    [GuestActivity.WALKING_TO_PARK_ENTRANCE]: {
+    WALKING_TO_PARK_ENTRANCE: {
         weights: { ...baseActivityWeights },
         interruptable: false
     },
-    [GuestActivity.WANDERING]: {
+    WANDERING: {
         weights: { ...baseActivityWeights },
         interruptable: true
     },
-    [GuestActivity.WATCHING_RIDE]: {
+    WATCHING_RIDE: {
         weights: { ...baseActivityWeights },
         interruptable: true
     },
-    [GuestActivity.WATCHING_CONSTRUCTION]: {
+    WATCHING_CONSTRUCTION: {
         weights: { ...baseActivityWeights },
         interruptable: true
     },
-    [GuestActivity.EATING]: {
+    EATING: {
         weights: { ...baseActivityWeights },
         interruptable: false
     },
-    [GuestActivity.DRINKING]: {
+    DRINKING: {
         weights: { ...baseActivityWeights },
         interruptable: false
     },
-    [GuestActivity.USING_TOILET]: {
+    USING_TOILET: {
         weights: { ...baseActivityWeights },
         interruptable: false
     },
-    [GuestActivity.SITTING]: {
+    SITTING: {
         weights: { ...baseActivityWeights },
         interruptable: true
     },
-    [GuestActivity.VOMITING]: {
+    VOMITING: {
         weights: { ...baseActivityWeights },
         interruptable: false
     },
 }
 
-export const canActivityBeInterrupted = (activity: GuestActivity): boolean => {
+export const canActivityBeInterrupted = (activity: GuestActivityKey): boolean => {
     return nextActivityWeight[activity].interruptable;
 }

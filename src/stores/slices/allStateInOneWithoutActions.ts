@@ -13,6 +13,7 @@ import { MoneyState, initialMoneyState } from "./moneySlice";
 import { type GuestActivityEffectState, initialGuestActivityEffectState } from "./activityEffectSlice";
 import { ActivityLengthState, initialActivityLengthState } from "./activityLengthSlice";
 import { ActivityChanceToSwitchState, initialActivityChanceToSwitchState } from "./activityChanceToSwitchSlice";
+import { ActivityChanceToUpdateState, initialActivityChanceToUpdateState } from "./activityChanceToUpdate";
 
 
 type StoreState = GuestGenerationState &
@@ -25,7 +26,8 @@ type StoreState = GuestGenerationState &
     MoneyState &
 { activityEffectStats: GuestActivityEffectState } &
 { activityLengthStats: ActivityLengthState } &
-{ activityChanceToSwitchActivitiesStats: ActivityChanceToSwitchState }
+{ activityChanceToSwitchActivitiesStats: ActivityChanceToSwitchState } &
+{ activityChanceToUpdateStats: ActivityChanceToUpdateState };
 
 export const useStore = create<StoreState>()(immer(devtools(() => ({
     ...initialGuestGenerationState,
@@ -38,5 +40,6 @@ export const useStore = create<StoreState>()(immer(devtools(() => ({
     ...initialMoneyState,
     activityEffectStats: initialGuestActivityEffectState,
     activityLengthStats: initialActivityLengthState,
-    activityChanceToSwitchActivitiesStats: initialActivityChanceToSwitchState
+    activityChanceToSwitchActivitiesStats: initialActivityChanceToSwitchState,
+    activityChanceToUpdateStats: initialActivityChanceToUpdateState
 }))));

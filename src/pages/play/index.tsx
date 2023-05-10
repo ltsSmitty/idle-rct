@@ -4,6 +4,12 @@ import { doTick, acquireUpgrade } from "~/stores/actions";
 import { GameController } from "~/stores/slices/gameController";
 import { useRef } from "react";
 import { type Upgrade } from "~/stores/slices/upgradeSlice";
+import { setActivityEffectValue } from "~/stores/actions";
+import { Slider } from "~/components/ui/slider";
+import {
+  GuestActivity,
+  GuestActivityKey,
+} from "~/stores/slices/activityEffectSlice";
 
 import {
   Tooltip,
@@ -11,6 +17,76 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { ActivityKeys } from "~/stores/slices/activityEffectSlice";
+
+const ModifierSlider = (props: {
+  activity: GuestActivityKey;
+  keyString: keyof ActivityKeys;
+}) => {
+  const { activity, keyString: key } = props;
+
+  const onSliderChange = (value: number[]) => {
+    setActivityEffectValue({
+      activity,
+      value: {
+        ...activityEffectStats[activity],
+        [key]: value[0],
+      },
+    });
+  };
+
+  const activityEffectStats = useStore((state) => state.activityEffectStats);
+
+  const activityKeys = activityEffectStats[activity];
+  return (
+    <div className="flex flex-row">
+      <div className="w-20 text-sm ">{key}</div>
+      <Slider
+        className="w-1/2 rounded-md "
+        defaultValue={[activityKeys[key]]}
+        max={10}
+        min={-10}
+        step={1}
+        onValueChange={onSliderChange}
+      />
+      <div className="ml-1"> {activityKeys[key]} </div>
+    </div>
+  );
+};
+
+const ActivityStatModifierCard = (props: { activity: GuestActivityKey }) => {
+  const { activity } = props;
+
+  return (
+    <div className="">
+      <div className="text-lg font-bold">{activity}</div>
+      <ModifierSlider activity={activity} keyString="happiness" />
+      <ModifierSlider activity={activity} keyString="energy" />
+      <ModifierSlider activity={activity} keyString="hunger" />
+      <ModifierSlider activity={activity} keyString="thirst" />
+      <ModifierSlider activity={activity} keyString="nausea" />
+      <ModifierSlider activity={activity} keyString="toilet" />
+    </div>
+  );
+};
+
+const ActivityStatModifierDisplay = () => {
+  const activities = (Object.keys(GuestActivity) as GuestActivityKey[]).filter(
+    (a) => a !== "GONE"
+  );
+
+  return (
+    <div className="flex flex-wrap justify-center gap-4">
+      {activities.map((activity) => {
+        return (
+          <div className="w-48" key={activity}>
+            <ActivityStatModifierCard activity={activity} />;
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 const GuestStatBar = ({
   value,
@@ -39,14 +115,14 @@ const GuestStatBar = ({
                         : "bg-green-500"
                       : ""
                   }`}
-                  style={{ width: `${clamp(value * 10, 0, 100)}%` }}
+                  style={{ width: `${clamp(value, 0, 100)}%` }}
                 ></div>
               </div>
             </div>
           </TooltipTrigger>
           <TooltipContent className=" absolute left-0  my-0.5 h-10 border-2 border-transparent">
             <p className="whitespace-nowrap">
-              {alt}: {clamp(Number(value.toFixed(1)), 0, 10)}
+              {alt}: {value.toFixed(1)}
             </p>
           </TooltipContent>
         </Tooltip>
@@ -59,37 +135,37 @@ const GuestStatDisplay = ({ guest }: { guest?: Guest }) => {
   return (
     <div className="">
       <GuestStatBar
-        value={guest?.happiness ?? 10}
+        value={guest?.happiness ?? 100}
         impact="positive"
         text="😊"
         alt="Happiness"
       />
       <GuestStatBar
-        value={guest?.energy ?? 10}
+        value={guest?.energy ?? 100}
         impact="positive"
         text="⚡️"
         alt="Energy"
       />
       <GuestStatBar
-        value={guest?.hunger ?? 3.9}
+        value={guest?.hunger ?? 39}
         impact="negative"
         text="🍕"
         alt="Hunger"
       />
       <GuestStatBar
-        value={guest?.thirst ?? 4}
+        value={guest?.thirst ?? 40}
         impact="negative"
         text="🥤"
         alt="Thirst"
       />
       <GuestStatBar
-        value={guest?.nausea ?? 4.1}
+        value={guest?.nausea ?? 41}
         impact="negative"
         text="🤢"
         alt="Nausea"
       />
       <GuestStatBar
-        value={guest?.toilet ?? 4.3}
+        value={guest?.toilet ?? 43}
         impact="negative"
         text="🚽"
         alt="Toilet"
@@ -238,6 +314,7 @@ const PlayPage: NextPage = () => {
         <div className="h-screen justify-end p-2">
           <GuestDisplayThumbnail />
           <NextTickButton />
+          <ActivityStatModifierDisplay />
           <GuestGenerationRateDisplay />
           <GuestStatDisplay guest={guests[0]} />
           <UpgradeDisplayColumns upgrades={upgrades} />

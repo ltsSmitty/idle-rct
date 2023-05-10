@@ -21,12 +21,12 @@ export type ModifierValue = {
 export type GuestGenerationStatsState = Record<keyof GuestGenerationKey, ModifierValue>
 
 export const initialGuestGenerationStateValues: GuestGenerationStatsState = {
-    "hunger": { value: 1, delta: 1 },
-    "thirst": { value: 1, delta: 1 },
-    "happiness": { value: 7, delta: 3 },
-    "nausea": { value: 0, delta: 1 },
-    "toilet": { value: 1, delta: 2 },
-    "energy": { value: 8, delta: 2 },
+    "hunger": { value: 10, delta: 10 },
+    "thirst": { value: 10, delta: 10 },
+    "happiness": { value: 70, delta: 30 },
+    "nausea": { value: 0, delta: 10 },
+    "toilet": { value: 10, delta: 20 },
+    "energy": { value: 80, delta: 20 },
     "intensityPreferenceRange": { value: 5, delta: 2 },
     "nauseaToleranceRange": { value: 5, delta: 2 }
 }

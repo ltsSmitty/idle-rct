@@ -19,149 +19,151 @@ export enum GuestActivity {
     GONE = "gone" // this guest will no longer count for anything, either dead or left the park
 }
 
+export type GuestActivityKey = keyof typeof GuestActivity
+
 export type ActivityKeys = Pick<Guest, "happiness" | "energy" | "hunger" | "thirst" | "nausea" | "toilet">
 
-export type GuestActivityEffectState = Record<GuestActivity, ActivityKeys>
+export type GuestActivityEffectState = Record<GuestActivityKey, ActivityKeys>
 
-export const initialGuestActivityEffectState: Record<GuestActivity, ActivityKeys> = {
-    [GuestActivity.WAITING_IN_LINE]: {
-        happiness: -0.1,
-        energy: 0.1,
-        hunger: 0.1,
-        thirst: 0.1,
-        nausea: -0.1,
-        toilet: 0.1,
+export const initialGuestActivityEffectState: GuestActivityEffectState = {
+    WAITING_IN_LINE: {
+        happiness: 0,
+        energy: 1,
+        hunger: 5,
+        thirst: 5,
+        nausea: -1,
+        toilet: 5,
     },
-    [GuestActivity.RIDING_RIDE]: {
-        happiness: 0.3,
-        energy: 0.1,
+    RIDING_RIDE: {
+        happiness: 3,
+        energy: 1,
         hunger: 0,
         thirst: 0,
-        toilet: 0.1,
-        nausea: 0.2
+        toilet: 1,
+        nausea: 2
     },
-    [GuestActivity.EATING]: {
-        energy: 0.1,
-        hunger: -1.0,
-        thirst: 0.2,
-        toilet: 0.1,
-        happiness: 0.1,
-        nausea: -0.1
+    EATING: {
+        energy: 1,
+        hunger: -10,
+        thirst: 2,
+        toilet: 1,
+        happiness: 1,
+        nausea: -1
     },
-    [GuestActivity.DRINKING]: {
-        happiness: 0.1,
-        energy: 0.1,
-        hunger: 0.1,
-        thirst: -1.0,
-        toilet: 0.1,
-        nausea: -0.1
+    DRINKING: {
+        happiness: 1,
+        energy: 1,
+        hunger: 1,
+        thirst: -1,
+        toilet: 1,
+        nausea: -1
     },
-    [GuestActivity.USING_TOILET]: {
-        happiness: -0.5,
+    USING_TOILET: {
+        happiness: -5,
         energy: 0,
         hunger: 0,
         thirst: 0,
-        toilet: -1.0,
-        nausea: -0.2
+        toilet: -1,
+        nausea: -2
     },
-    [GuestActivity.WATCHING_RIDE]: {
-        happiness: -0.1,
-        energy: 0.1,
-        hunger: 0.1,
-        thirst: 0.1,
-        toilet: 0.1,
-        nausea: -0.1
-    },
-    [GuestActivity.WATCHING_CONSTRUCTION]: {
-        happiness: 0.1,
-        energy: 0.1,
-        hunger: 0.1,
-        thirst: 0.1,
-        toilet: 0.1,
-        nausea: -0.1
-    },
-    [GuestActivity.SITTING]: {
-        happiness: 0.1,
-        energy: 0.1,
-        hunger: 0.1,
-        thirst: 0.1,
-        toilet: 0.1,
-        nausea: -0.1
-    },
-    [GuestActivity.WALKING_TO_RIDE]: {
-        happiness: +0.1,
-        energy: -0.1,
-        hunger: +0.1,
-        thirst: +0.1,
-        toilet: +0.1,
-        nausea: -0.1
-    },
-    [GuestActivity.WALKING_TO_SHOP]: {
-        happiness: -0.1,
-        energy: -0.1,
-        hunger: +0.1,
-        thirst: +0.1,
-        toilet: +0.1,
-        nausea: -0.1
-    },
-    [GuestActivity.WALKING_TO_TOILET]: {
-        happiness: -0.1,
-        energy: -0.1,
-        hunger: +0.1,
-        thirst: +0.1,
-        toilet: +0.1,
-        nausea: -0.1
-    },
-
-    [GuestActivity.WALKING_TO_RIDE_ENTRANCE]: {
-        happiness: -0.1,
-        energy: -0.1,
-        hunger: +0.1,
-        thirst: +0.1,
-        toilet: +0.1,
-        nausea: -0.1
-    },
-    [GuestActivity.WALKING_TO_RIDE_EXIT]: {
-        happiness: -0.1,
-        energy: -0.1,
-        hunger: +0.1,
-        thirst: +0.1,
-        toilet: +0.1,
-        nausea: -0.1
-    },
-    [GuestActivity.WALKING_TO_PARK_ENTRANCE]: {
-        happiness: -0.1,
-        energy: -0.1,
-        hunger: +0.1,
-        thirst: +0.1,
-        toilet: +0.1,
-        nausea: -0.1
-    },
-    [GuestActivity.WALKING_TO_PARK_EXIT]: {
-        happiness: -0.1,
-        energy: -0.1,
-        hunger: +0.1,
-        thirst: +0.1,
-        toilet: +0.1,
-        nausea: -0.1
-    },
-    [GuestActivity.VOMITING]: {
-        happiness: -0.1,
-        energy: -0.1,
-        hunger: +0,
-        thirst: +0,
-        toilet: +0,
+    WATCHING_RIDE: {
+        happiness: -0,
+        energy: 1,
+        hunger: 1,
+        thirst: 1,
+        toilet: 1,
         nausea: -1
     },
-    [GuestActivity.WANDERING]: {
-        happiness: -0.1,
-        energy: -0.1,
-        hunger: +0.1,
-        thirst: +0.1,
-        toilet: +0.1,
-        nausea: +0.1
+    WATCHING_CONSTRUCTION: {
+        happiness: 1,
+        energy: 1,
+        hunger: 1,
+        thirst: 1,
+        toilet: 1,
+        nausea: -1
     },
-    [GuestActivity.GONE]: {
+    SITTING: {
+        happiness: 1,
+        energy: 1,
+        hunger: 1,
+        thirst: 1,
+        toilet: 1,
+        nausea: -1
+    },
+    WALKING_TO_RIDE: {
+        happiness: 1,
+        energy: -1,
+        hunger: 1,
+        thirst: 1,
+        toilet: 1,
+        nausea: -1
+    },
+    WALKING_TO_SHOP: {
+        happiness: -1,
+        energy: -1,
+        hunger: 1,
+        thirst: 1,
+        toilet: 1,
+        nausea: 1
+    },
+    WALKING_TO_TOILET: {
+        happiness: -1,
+        energy: -1,
+        hunger: 1,
+        thirst: 1,
+        toilet: 1,
+        nausea: -1
+    },
+
+    WALKING_TO_RIDE_ENTRANCE: {
+        happiness: -1,
+        energy: -1,
+        hunger: 1,
+        thirst: 1,
+        toilet: 1,
+        nausea: -1
+    },
+    WALKING_TO_RIDE_EXIT: {
+        happiness: -1,
+        energy: -1,
+        hunger: 1,
+        thirst: 1,
+        toilet: 1,
+        nausea: -1
+    },
+    WALKING_TO_PARK_ENTRANCE: {
+        happiness: -1,
+        energy: -1,
+        hunger: 1,
+        thirst: 1,
+        toilet: 1,
+        nausea: -1
+    },
+    WALKING_TO_PARK_EXIT: {
+        happiness: -1,
+        energy: -1,
+        hunger: 1,
+        thirst: 1,
+        toilet: 1,
+        nausea: -1
+    },
+    VOMITING: {
+        happiness: -1,
+        energy: -1,
+        hunger: 0,
+        thirst: 0,
+        toilet: 0,
+        nausea: -10
+    },
+    WANDERING: {
+        happiness: -1,
+        energy: -1,
+        hunger: 1,
+        thirst: 1,
+        toilet: 1,
+        nausea: 1
+    },
+    GONE: {
         happiness: 0,
         energy: 0,
         hunger: 0,
