@@ -13,20 +13,20 @@ export const initialActivityDurationState: ActivityDurationState = {
         delta: 50
     },
     RIDING_RIDE: {
-        value: 0,
-        delta: 0
+        value: 40,
+        delta: 10
     },
     EATING: {
-        value: 20,
+        value: 30,
         delta: 3
     },
     DRINKING: {
-        value: 20,
-        delta: 5
+        value: 30,
+        delta: 0
     },
     USING_TOILET: {
         value: 40,
-        delta: 10
+        delta: 0
     },
     WATCHING_RIDE: {
         value: 30,
@@ -46,14 +46,14 @@ export const initialActivityDurationState: ActivityDurationState = {
     },
     WALKING_TO_SHOP: {
         value: 40,
-        delta: 40
+        delta: 30
     },
     WALKING_TO_TOILET: {
         value: 50,
         delta: 40
     },
     WALKING_TO_RIDE_ENTRANCE: {
-        value: 20,
+        value: 10,
         delta: 15
     },
     WALKING_TO_RIDE_EXIT: {
@@ -69,8 +69,8 @@ export const initialActivityDurationState: ActivityDurationState = {
         delta: 25
     },
     VOMITING: {
-        value: 20,
-        delta: 5
+        value: 30,
+        delta: 0
     },
     WANDERING: {
         value: 40,

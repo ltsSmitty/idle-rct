@@ -19,6 +19,7 @@ export const doGuestActivites = ({ guests }: { guests: Guest[] }): Guest[] => {
 
         // check if ticks til next activity is 0
         if (guest.ticksTilActivityChange <= 0 || hasGuestFixedProblemState(guest)) {
+            // if (guest.ticksTilActivityChange <= 0) {
             return assignNewActivity(guest);
         }
 
