@@ -4,7 +4,7 @@ export type ActivityLengthState = ModifierValue
 
 export const initialActivityLengthState: ActivityLengthState = {
     /** Central value for how many ticks to complete any activity */
-    value: 200,
+    value: 50,
     /** How much the value can differnt from the central value */
-    delta: 150
+    delta: 25
 }

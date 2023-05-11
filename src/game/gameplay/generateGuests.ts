@@ -1,5 +1,5 @@
 import { type GuestGenerationStatsState } from "~/stores/slices/guestGenerationStatsSlice";
-import { GuestActivity, GuestActivityKey } from "~/stores/slices/activityEffectSlice";
+import { type GuestActivityKey } from "~/stores/slices/activityEffectSlice";
 
 /** The range + and - from the Guest's chosen intensityPreferenceRange and nauseaTolleranceRange */
 const BOUNDED_PROPERTY_RANGE = 1.5;

@@ -295,3 +295,33 @@ const nextActivityWeight: Record<GuestActivityKey, { weights: ActivityWeights, i
 export const canActivityBeInterrupted = (activity: GuestActivityKey): boolean => {
     return nextActivityWeight[activity].interruptable;
 }
+
+type Extends<T, U extends T> = U;
+
+type NegativeActivity = Extends<GuestActivityKey, "VOMITING" | "USING_TOILET" | "DRINKING" | "EATING">;
+
+/**
+ * Checks if a guest has fixed their negative activity state (e.g. they have finished vomiting, toilet, eating or drinking).
+ * @param guest The guest to check.
+ * @returns True if the guest has fixed their negative activity state, false otherwise.
+ */
+export const hasGuestFixedProblemState = (guest: Guest): boolean => {
+    const initialActivity = guest.currentActivity;
+    if (!isNegativeActivity(initialActivity)) return false;
+    switch (initialActivity) {
+        case "VOMITING":
+            return guest.nausea <= 0;
+        case "USING_TOILET":
+            return guest.toilet <= 0;
+        case "DRINKING":
+            return guest.thirst <= 0;
+        case "EATING":
+            return guest.hunger <= 0;
+    }
+}
+
+
+const isNegativeActivity = (activity: GuestActivityKey): activity is NegativeActivity => {
+    const negativeActivities: NegativeActivity[] = ["VOMITING", "USING_TOILET", "DRINKING", "EATING"];
+    return negativeActivities.includes(activity as NegativeActivity);
+}

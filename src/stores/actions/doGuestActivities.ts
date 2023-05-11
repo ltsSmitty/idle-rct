@@ -1,4 +1,4 @@
-import { canActivityBeInterrupted, getNextGuestActivity, guestHasAdverseImpacts } from "~/game/gameplay/getNextGuestActivity";
+import { canActivityBeInterrupted, getNextGuestActivity, guestHasAdverseImpacts, hasGuestFixedProblemState } from "~/game/gameplay/getNextGuestActivity";
 import { useStore } from "../slices/allStateInOneWithoutActions";
 import { calculateModifierValue } from "~/game/gameplay/generateGuests";
 
@@ -18,7 +18,7 @@ export const doGuestActivites = ({ guests }: { guests: Guest[] }): Guest[] => {
     const updatedGuests = guests.map(guest => {
 
         // check if ticks til next activity is 0
-        if (guest.ticksTilActivityChange <= 0) {
+        if (guest.ticksTilActivityChange <= 0 || hasGuestFixedProblemState(guest)) {
             return assignNewActivity(guest);
         }
 
