@@ -42,20 +42,20 @@ const generateGuest = (props: {
 }): Guest => {
     const { guestStats, guestGenerationLocation, startingActivity, guestId } = props;
 
-    const intensityMidpoint = calculateModifierValue(guestStats.intensityPreferenceRange)
-    const nauseaMidpoint = calculateModifierValue(guestStats.nauseaToleranceRange)
+    const intensityMidpoint = calculateModifierValue(guestStats.intensityPreferenceRange, 10, 0)
+    const nauseaMidpoint = calculateModifierValue(guestStats.nauseaToleranceRange, 10, 0)
 
     const newGuest = {
         id: guestId,
         name: `Guest ${guestId}`,
         location: guestGenerationLocation,
 
-        hunger: calculateModifierValue(guestStats.hunger, 100),
-        thirst: calculateModifierValue(guestStats.thirst, 100),
-        happiness: calculateModifierValue(guestStats.happiness, 100),
-        nausea: calculateModifierValue(guestStats.nausea, 100),
-        toilet: calculateModifierValue(guestStats.toilet, 100),
-        energy: calculateModifierValue(guestStats.energy, 100),
+        hunger: calculateModifierValue(guestStats.hunger, 100, 0),
+        thirst: calculateModifierValue(guestStats.thirst, 100, 0),
+        happiness: calculateModifierValue(guestStats.happiness, 100, 0),
+        nausea: calculateModifierValue(guestStats.nausea, 100, 0),
+        toilet: calculateModifierValue(guestStats.toilet, 100, 0),
+        energy: calculateModifierValue(guestStats.energy, 100, 0),
 
         intensityPreferenceRange: {
             lowerBound: intensityMidpoint - BOUNDED_PROPERTY_RANGE,
@@ -85,11 +85,11 @@ type ModifierValue = {
 /**
  * Calculates a random value for a given modifier within a specified range.
  * @param modifier The modifier value to calculate.
- * @param max The maximum value that the modifier can be. Defaults to 10.
- * @param min The minimum value that the modifier can be. Defaults to 0.
+ * @param max The maximum value that the modifier can be.
+ * @param min The minimum value that the modifier can be.
  * @returns A random value for the modifier within the specified range.
  */
-export const calculateModifierValue = (modifier: ModifierValue, max = 10, min = 0) => {
+export const calculateModifierValue = (modifier: ModifierValue, max: number, min: number) => {
     return Math.min(max, // clamp <= 10
         Math.max(min, // clamp >= 0
             modifier.value + (Math.random() * modifier.delta * 2) - modifier.delta))

@@ -46,11 +46,15 @@ export const doGuestActivites = ({ guests }: { guests: Guest[] }): Guest[] => {
 /** Set a guest's new activity and number of ticks til next activity */
 const assignNewActivity = (guest: Guest): Guest => {
     guest.currentActivity = getNextGuestActivity(guest).activity;
-    // randomly choose a length, with a max of 1000 ticks
-    guest.ticksTilActivityChange = calculateModifierValue(activityLengthStats, 1000, 0);
+    // randomly choose a length, with an absolute max of 100 ticks
+    guest.ticksTilActivityChange = calculateModifierValue(activityLengthStats, 100, 0);
     return guest;
 }
 
+/**
+ * Determines whether a guest should be interrupted from their current activity based on the chance to switch activities.
+ * @returns A boolean indicating whether the guest should be interrupted.
+ */
 const shouldGuestBeInterrupted = (): boolean => {
     const chanceToSwitch = calculateModifierValue(activityChanceToSwitchActivitiesStats, 1, 0);
     return Math.random() < chanceToSwitch;
