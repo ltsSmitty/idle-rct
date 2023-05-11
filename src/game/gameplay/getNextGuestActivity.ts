@@ -15,14 +15,14 @@ const baseActivityWeights: ActivityWeights = {
 }
 
 /** If a negative stat gets at least this high, it'll start adversely weighing into their decision making */
-const NEGATIVE_IMPACT_THRESHOLD_LOW = 7;
-const NEGATIVE_IMPACT_THRESHOLD_MED = 8;
-const NEGATIVE_IMPACT_THRESHOLD_HIGH = 9;
+const NEGATIVE_IMPACT_THRESHOLD_LOW = 70;
+const NEGATIVE_IMPACT_THRESHOLD_MED = 80;
+const NEGATIVE_IMPACT_THRESHOLD_HIGH = 90;
 
 /** If a positive stat gets at least this low, it'll start adversely weighing into their decision making */
-const POSITIVE_IMPACT_THRESHOLD_LOW = 3;
-const POSITIVE_IMPACT_THRESHOLD_MED = 2;
-const POSITIVE_IMPACT_THRESHOLD_HIGH = 1;
+const POSITIVE_IMPACT_THRESHOLD_LOW = 30;
+const POSITIVE_IMPACT_THRESHOLD_MED = 20;
+const POSITIVE_IMPACT_THRESHOLD_HIGH = 10;
 
 /** Strongly influence that the next event will be this */
 const IMPACT_WEIGHT_HIGH = 50
