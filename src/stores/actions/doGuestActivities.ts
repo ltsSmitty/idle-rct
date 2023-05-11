@@ -2,7 +2,7 @@ import { canActivityBeInterrupted, getNextGuestActivity, guestHasAdverseImpacts,
 import { useStore } from "../slices/allStateInOneWithoutActions";
 import { calculateModifierValue } from "~/game/gameplay/generateGuests";
 
-const { activityLengthStats, activityChanceToSwitchActivitiesStats } = useStore.getState();
+const { activityDurationStats, activityChanceToSwitchActivitiesStats } = useStore.getState();
 
 
 /**
@@ -47,7 +47,7 @@ export const doGuestActivites = ({ guests }: { guests: Guest[] }): Guest[] => {
 const assignNewActivity = (guest: Guest): Guest => {
     guest.currentActivity = getNextGuestActivity(guest).activity;
     // randomly choose a length, with an absolute max of 100 ticks
-    guest.ticksTilActivityChange = calculateModifierValue(activityLengthStats, 100, 0);
+    guest.ticksTilActivityChange = calculateModifierValue(activityDurationStats, 100, 0);
     return guest;
 }
 

@@ -1,5 +1,5 @@
 import { useStore } from "../slices/allStateInOneWithoutActions";
-import { GuestActivityEffectState, GuestActivity, ActivityKeys, GuestActivityKey } from "../slices/activityEffectSlice";
+import { GuestActivityEffectState, ActivityKeys, GuestActivityKey } from "../slices/activityEffectSlice";
 /**
  * Sets the value of a given activity effect in the store.
  * @param activity The key of the activity effect to update.

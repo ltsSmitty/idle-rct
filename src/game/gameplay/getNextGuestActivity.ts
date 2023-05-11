@@ -320,7 +320,6 @@ export const hasGuestFixedProblemState = (guest: Guest): boolean => {
     }
 }
 
-
 const isNegativeActivity = (activity: GuestActivityKey): activity is NegativeActivity => {
     const negativeActivities: NegativeActivity[] = ["VOMITING", "USING_TOILET", "DRINKING", "EATING"];
     return negativeActivities.includes(activity as NegativeActivity);
