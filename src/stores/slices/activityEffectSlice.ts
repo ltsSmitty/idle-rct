@@ -27,12 +27,12 @@ export type GuestActivityEffectState = Record<GuestActivityKey, ActivityKeys>
 
 export const initialGuestActivityEffectState: GuestActivityEffectState = {
     WAITING_IN_LINE: {
-        happiness: 0,
+        happiness: 4,
         energy: 1,
-        hunger: 5,
-        thirst: 5,
+        hunger: 1,
+        thirst: 1,
         nausea: -1,
-        toilet: 5,
+        toilet: 1,
     },
     RIDING_RIDE: {
         happiness: 3,
@@ -43,112 +43,112 @@ export const initialGuestActivityEffectState: GuestActivityEffectState = {
         nausea: 2
     },
     EATING: {
-        energy: 1,
-        hunger: -10,
-        thirst: 2,
-        toilet: 1,
         happiness: 1,
+        energy: 6,
+        hunger: -10,
+        thirst: 1,
+        toilet: 0,
         nausea: -1
     },
     DRINKING: {
         happiness: 1,
-        energy: 1,
+        energy: 6,
         hunger: 1,
-        thirst: -1,
+        thirst: -10,
         toilet: 1,
         nausea: -1
     },
     USING_TOILET: {
-        happiness: -5,
+        happiness: 1,
         energy: 0,
         hunger: 0,
         thirst: 0,
-        toilet: -1,
+        toilet: -10,
         nausea: -2
     },
     WATCHING_RIDE: {
-        happiness: -0,
+        happiness: 2,
         energy: 1,
-        hunger: 1,
-        thirst: 1,
-        toilet: 1,
+        hunger: 0,
+        thirst: 0,
+        toilet: 0,
         nausea: -1
     },
     WATCHING_CONSTRUCTION: {
         happiness: 1,
         energy: 1,
-        hunger: 1,
-        thirst: 1,
-        toilet: 1,
-        nausea: -1
+        hunger: 0,
+        thirst: 0,
+        toilet: 0,
+        nausea: 0
     },
     SITTING: {
-        happiness: 1,
+        happiness: 3,
         energy: 1,
-        hunger: 1,
-        thirst: 1,
+        hunger: 0,
+        thirst: 0,
         toilet: 1,
-        nausea: -1
+        nausea: -4
     },
     WALKING_TO_RIDE: {
-        happiness: 1,
+        happiness: 3,
         energy: -1,
-        hunger: 1,
+        hunger: 0,
         thirst: 1,
-        toilet: 1,
-        nausea: -1
+        toilet: 0,
+        nausea: 0
     },
     WALKING_TO_SHOP: {
-        happiness: -1,
-        energy: -1,
-        hunger: 1,
-        thirst: 1,
+        happiness: 0,
+        energy: -2,
+        hunger: 0,
+        thirst: 0,
         toilet: 1,
-        nausea: 1
+        nausea: 0
     },
     WALKING_TO_TOILET: {
         happiness: -1,
         energy: -1,
-        hunger: 1,
-        thirst: 1,
+        hunger: 0,
+        thirst: 0,
         toilet: 1,
         nausea: -1
     },
 
     WALKING_TO_RIDE_ENTRANCE: {
-        happiness: -1,
+        happiness: 3,
         energy: -1,
         hunger: 1,
         thirst: 1,
         toilet: 1,
-        nausea: -1
+        nausea: 0
     },
     WALKING_TO_RIDE_EXIT: {
-        happiness: -1,
-        energy: -1,
-        hunger: 1,
-        thirst: 1,
-        toilet: 1,
-        nausea: -1
+        happiness: 1,
+        energy: 0,
+        hunger: 0,
+        thirst: 0,
+        toilet: 0,
+        nausea: 0
     },
     WALKING_TO_PARK_ENTRANCE: {
-        happiness: -1,
-        energy: -1,
-        hunger: 1,
-        thirst: 1,
-        toilet: 1,
+        happiness: 1,
+        energy: 0,
+        hunger: 0,
+        thirst: 0,
+        toilet: 0,
         nausea: -1
     },
     WALKING_TO_PARK_EXIT: {
-        happiness: -1,
+        happiness: -3,
         energy: -1,
-        hunger: 1,
-        thirst: 1,
-        toilet: 1,
-        nausea: -1
+        hunger: 0,
+        thirst: 0,
+        toilet: 0,
+        nausea: 0
     },
     VOMITING: {
-        happiness: -1,
+        happiness: -2,
         energy: -1,
         hunger: 0,
         thirst: 0,
@@ -156,7 +156,7 @@ export const initialGuestActivityEffectState: GuestActivityEffectState = {
         nausea: -10
     },
     WANDERING: {
-        happiness: -1,
+        happiness: 1,
         energy: -1,
         hunger: 1,
         thirst: 1,
