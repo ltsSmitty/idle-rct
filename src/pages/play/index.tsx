@@ -310,15 +310,19 @@ const PlayPage: NextPage = () => {
   return (
     <div className="">
       <GameController />
-      <div className="max max-w-[400px] bg-stone-600">
-        <div className="h-screen justify-end p-2">
-          <GuestDisplayThumbnail />
-          <NextTickButton />
+      <div className="flex">
+        <div className=" max max-w-[400px] flex-none bg-stone-600">
+          <div className="h-screen justify-end p-2">
+            <GuestDisplayThumbnail />
+            <NextTickButton />
+            <GuestGenerationRateDisplay />
+            <GuestStatDisplay guest={guests[0]} />
+            <UpgradeDisplayColumns upgrades={upgrades} />
+            <GuestDisplayColumns guests={guestsRef.current} />
+          </div>
+        </div>
+        <div className="max-w-[400]">
           <ActivityStatModifierDisplay />
-          <GuestGenerationRateDisplay />
-          <GuestStatDisplay guest={guests[0]} />
-          <UpgradeDisplayColumns upgrades={upgrades} />
-          <GuestDisplayColumns guests={guestsRef.current} />
         </div>
       </div>
     </div>
