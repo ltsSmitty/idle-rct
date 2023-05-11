@@ -80,7 +80,7 @@ const ActivityStatModifierDisplay = () => {
       {activities.map((activity) => {
         return (
           <div className="w-48" key={activity}>
-            <ActivityStatModifierCard activity={activity} />;
+            <ActivityStatModifierCard activity={activity} />
           </div>
         );
       })}

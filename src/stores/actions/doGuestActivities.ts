@@ -47,7 +47,7 @@ export const doGuestActivites = ({ guests }: { guests: Guest[] }): Guest[] => {
 const assignNewActivity = (guest: Guest): Guest => {
     guest.currentActivity = getNextGuestActivity(guest).activity;
     // randomly choose a length, with an absolute max of 100 ticks
-    guest.ticksTilActivityChange = calculateModifierValue(activityDurationStats, 100, 0);
+    guest.ticksTilActivityChange = calculateModifierValue(activityDurationStats[guest.currentActivity], 100, 0);
     return guest;
 }
 

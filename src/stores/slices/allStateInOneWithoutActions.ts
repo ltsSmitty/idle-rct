@@ -11,7 +11,7 @@ import { immer } from "zustand/middleware/immer";
 import { UpgradeState, initialUpgradeState } from "./upgradeSlice";
 import { MoneyState, initialMoneyState } from "./moneySlice";
 import { type GuestActivityEffectState, initialGuestActivityEffectState } from "./activityEffectSlice";
-import { ActivityDurationState, initialActivityDurationState } from "./activityLengthSlice";
+import { ActivityDurationState, initialActivityDurationState } from "./activityDurationSlice";
 import { ActivityChanceToSwitchState, initialActivityChanceToSwitchState } from "./activityChanceToSwitchSlice";
 import { ActivityChanceToUpdateState, initialActivityChanceToUpdateState } from "./activityChanceToUpdate";
 
