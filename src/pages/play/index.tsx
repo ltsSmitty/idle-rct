@@ -18,6 +18,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { ActivityKeys } from "~/stores/slices/activityEffectSlice";
+import { CreateRideForm } from "./components/RideCreatorForm";
 
 const ModifierSlider = (props: {
   activity: GuestActivityKey;
@@ -349,12 +350,13 @@ const PlayPage: NextPage = () => {
       <div className="flex">
         <div className=" max max-w-[400px] flex-none bg-stone-600">
           <div className="h-screen justify-end p-2">
-            <GuestDisplayThumbnail />
-            <NextTickButton />
-            <GuestGenerationRateDisplay />
+            {/* <GuestDisplayThumbnail />
+            <NextTickButton /> */}
+            <CreateRideForm />
+            {/* <GuestGenerationRateDisplay />
             <GuestStatDisplay guest={guests[0]} />
             <UpgradeDisplayColumns upgrades={upgrades} />
-            <GuestDisplayColumns guests={guestsRef.current} />
+            <GuestDisplayColumns guests={guestsRef.current} /> */}
           </div>
         </div>
         <div className="max-w-[400]">
