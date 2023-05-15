@@ -131,6 +131,40 @@ const GuestStatBar = ({
   );
 };
 
+const GuestNauseaToleranceBar = ({ guest }: { guest: Guest | undefined }) => {
+  const nauseaPreference = guest?.nauseaToleranceRange.lowerBound;
+  if (!nauseaPreference) {
+    return <div></div>;
+  }
+  return (
+    <div>
+      Nausea tolerance:{" "}
+      {nauseaPreference < 1
+        ? "Low"
+          ? nauseaPreference < 3
+          : "Average"
+        : "High"}
+    </div>
+  );
+};
+
+const PreferredIntensityBar = ({ guest }: { guest: Guest | undefined }) => {
+  const preferredIntensity = guest?.intensityPreferenceRange.lowerBound;
+  if (!preferredIntensity) {
+    return <div></div>;
+  }
+  return (
+    <div>
+      Preferred intensity:{" "}
+      {preferredIntensity < 1
+        ? "Low"
+          ? preferredIntensity < 3
+          : "Average"
+        : "High"}
+    </div>
+  );
+};
+
 const GuestStatDisplay = ({ guest }: { guest?: Guest }) => {
   return (
     <div className="">
@@ -170,6 +204,8 @@ const GuestStatDisplay = ({ guest }: { guest?: Guest }) => {
         text="🚽"
         alt="Toilet"
       />
+      <PreferredIntensityBar guest={guest} />
+      <GuestNauseaToleranceBar guest={guest} />
       <div className="">⏱️ {guest?.ticksTilActivityChange}</div>
     </div>
   );
@@ -322,7 +358,7 @@ const PlayPage: NextPage = () => {
           </div>
         </div>
         <div className="max-w-[400]">
-          <ActivityStatModifierDisplay />
+          {/* <ActivityStatModifierDisplay /> */}
         </div>
       </div>
     </div>

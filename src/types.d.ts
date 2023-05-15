@@ -106,7 +106,7 @@ interface LoadedObject {
     /**
      * The index of the loaded object for the object type.
      */
-    readonly index: number;
+    // readonly index: number;
 
     /**
      * The unique identifier of the object, e.g. "rct2.burgb".
@@ -133,18 +133,18 @@ interface RideObject extends LoadedObject {
     readonly capacity: string;
 
     readonly flags: number;
-    readonly rideType: number[];
-    readonly minCarsInTrain: number;
-    readonly maxCarsInTrain: number;
-    readonly carsPerFlatRide: number;
-    readonly zeroCars: number;
-    readonly tabVehicle: number;
-    readonly defaultVehicle: number;
-    readonly frontVehicle: number;
-    readonly secondVehicle: number;
-    readonly rearVehicle: number;
-    readonly thirdVehicle: number;
-    readonly vehicles: RideObjectVehicle[];
+    readonly rideType: number;
+    // readonly minCarsInTrain: number;
+    // readonly maxCarsInTrain: number;
+    // readonly carsPerFlatRide: number;
+    // readonly zeroCars: number;
+    // readonly tabVehicle: number;
+    // readonly defaultVehicle: number;
+    // readonly frontVehicle: number;
+    // readonly secondVehicle: number;
+    // readonly rearVehicle: number;
+    // readonly thirdVehicle: number;
+    // readonly vehicles: RideObjectVehicle[];
     readonly excitementMultiplier: number;
     readonly intensityMultiplier: number;
     readonly nauseaMultiplier: number;

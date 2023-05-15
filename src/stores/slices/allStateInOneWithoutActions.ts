@@ -14,6 +14,7 @@ import { type GuestActivityEffectState, initialGuestActivityEffectState } from "
 import { ActivityDurationState, initialActivityDurationState } from "./activityDurationSlice";
 import { ActivityChanceToSwitchState, initialActivityChanceToSwitchState } from "./activityChanceToSwitchSlice";
 import { ActivityChanceToUpdateState, initialActivityChanceToUpdateState } from "./activityChanceToUpdate";
+import { RideState, initialRideState } from "./rideSlice";
 
 
 type StoreState = GuestGenerationState &
@@ -27,7 +28,8 @@ type StoreState = GuestGenerationState &
 { activityEffectStats: GuestActivityEffectState } &
 { activityDurationStats: ActivityDurationState } &
 { activityChanceToSwitchActivitiesStats: ActivityChanceToSwitchState } &
-{ activityChanceToUpdateStats: ActivityChanceToUpdateState };
+{ activityChanceToUpdateStats: ActivityChanceToUpdateState } &
+    RideState;
 
 export const useStore = create<StoreState>()(immer(devtools(() => ({
     ...initialGuestGenerationState,
@@ -41,5 +43,6 @@ export const useStore = create<StoreState>()(immer(devtools(() => ({
     activityEffectStats: initialGuestActivityEffectState,
     activityDurationStats: initialActivityDurationState,
     activityChanceToSwitchActivitiesStats: initialActivityChanceToSwitchState,
-    activityChanceToUpdateStats: initialActivityChanceToUpdateState
+    activityChanceToUpdateStats: initialActivityChanceToUpdateState,
+    ...initialRideState
 }))));
