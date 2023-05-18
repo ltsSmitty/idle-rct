@@ -17,7 +17,7 @@ const defaultValues: RideCreatorFormProps = {
   intensity: 1,
 };
 
-export const CreateRideForm = () => {
+const CreateRideForm = () => {
   const { onSubmit, methods } = useCreateRideForm({ defaultValues });
   const rides = useStore((state) => state.rides);
   const rideTypes = useStore((state) => state.rideTypes);
@@ -125,3 +125,5 @@ const ValueSlider = (props: {
     </div>
   );
 };
+
+export default CreateRideForm;

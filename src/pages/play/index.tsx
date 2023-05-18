@@ -18,7 +18,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { ActivityKeys } from "~/stores/slices/activityEffectSlice";
-import { CreateRideForm } from "./components/RideCreateForm";
+import CreateRideForm from "./components/RideCreateForm";
 
 const ModifierSlider = (props: {
   activity: GuestActivityKey;
