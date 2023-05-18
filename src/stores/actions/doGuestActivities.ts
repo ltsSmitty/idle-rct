@@ -1,6 +1,7 @@
 import { canActivityBeInterrupted, getNextGuestActivity, guestHasAdverseImpacts, hasGuestFixedProblemState } from "~/game/gameplay/getNextGuestActivity";
 import { useStore } from "../slices/allStateInOneWithoutActions";
 import { calculateModifierValue } from "~/game/gameplay/generateGuests";
+import { GuestActivity } from "../slices/activityEffectSlice";
 
 const { activityDurationStats, activityChanceToSwitchActivitiesStats } = useStore.getState();
 
