@@ -18,7 +18,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { ActivityKeys } from "~/stores/slices/activityEffectSlice";
-import { CreateRideForm } from "./components/RideCreatorForm";
+import { CreateRideForm } from "./components/RideCreateForm";
 
 const ModifierSlider = (props: {
   activity: GuestActivityKey;
@@ -342,6 +342,7 @@ const PlayPage: NextPage = () => {
   const upgrades = useStore((state) => state.upgrades);
   const guests = useStore((state) => state.guests);
   const guestsRef = useRef(guests);
+  const rides = useStore((state) => state.rides);
   guestsRef.current = guests;
 
   return (
@@ -353,6 +354,11 @@ const PlayPage: NextPage = () => {
             {/* <GuestDisplayThumbnail />
             <NextTickButton /> */}
             <CreateRideForm />
+            <div>
+              {rides.map((ride) => {
+                return <div key={ride.id}>{ride.name}</div>;
+              })}
+            </div>
             {/* <GuestGenerationRateDisplay />
             <GuestStatDisplay guest={guests[0]} />
             <UpgradeDisplayColumns upgrades={upgrades} />

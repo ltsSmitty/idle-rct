@@ -1,26 +1,27 @@
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
-
-type ValueOption = "low" | "medium" | "high" | "very high" | "extreme";
+import { addRide, createRideFromForm } from "~/stores/actions/addRide";
 
 export type RideCreatorFormProps = {
   name: string;
-  type: string;
+  type: number;
   nausea: number;
   excitement: number;
   intensity: number;
 };
 
-export const useCreateRideForm = (props?: {
-  defaultValues: RideCreatorFormProps;
+export const useCreateRideForm = ({
+  defaultValues,
+}: {
+  defaultValues?: RideCreatorFormProps;
 }) => {
-  const defaultValues = props?.defaultValues;
   const methods = useForm<RideCreatorFormProps>({
     defaultValues,
   });
   const onSubmit = useCallback((formValues: RideCreatorFormProps) => {
-    // todo actually handle the form submission
     console.log(formValues);
+    const ride = createRideFromForm(formValues);
+    addRide(ride);
   }, []);
 
   return {

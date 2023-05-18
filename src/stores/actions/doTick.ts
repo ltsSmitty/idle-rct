@@ -7,10 +7,13 @@ import { doGuestActivites } from "./doGuestActivities";
 export const doTick = () => useStore.setState((state => {
     const { rate, guestGenerationStats, tick, nextGuestId, guestGenerationLocation, guests, activityEffectStats } = state;
 
-    // perform the activities for existing guests
+    // increment the guest stats based on their current activity
     const updatedGuests = getUpdatedGuestsAfterActivities(guests, activityEffectStats);
 
     // update guests activities
+    // if they finished what they were doing, assign something new
+    // if they're still in the middle of things, keep doing it
+    // if their stats get too negative, interrupt what they're doing so that vomit/toilet/shop etc.
     const updatedGuestsAfterActivities = doGuestActivites({ guests: updatedGuests });
 
     // grab the number of guests to create

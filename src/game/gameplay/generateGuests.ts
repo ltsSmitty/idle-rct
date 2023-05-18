@@ -45,7 +45,7 @@ const generateGuest = (props: {
     const intensityMidpoint = calculateModifierValue(guestStats.intensityPreferenceRange, 10, 0)
     const nauseaMidpoint = calculateModifierValue(guestStats.nauseaToleranceRange, 10, 0)
 
-    const newGuest = {
+    const newGuest: Guest = {
         id: guestId,
         name: `Guest ${guestId}`,
         location: guestGenerationLocation,
@@ -66,6 +66,8 @@ const generateGuest = (props: {
             upperBound: nauseaMidpoint + BOUNDED_PROPERTY_RANGE
         },
         currentActivity: startingActivity ?? STARTING_GUEST_ACTIVITY,
+        destinationRideId: undefined,
+
         nextActivity: startingActivity ?? null,
         ticksTilActivityChange: -1
     }

@@ -61,6 +61,8 @@ interface Guest {
     nauseaToleranceRange: BoundedProperty
 
     currentActivity: GuestActivityKey;
+    destinationRideId: number | undefined;
+
     nextActivity: GuestActivityKey | null;
     ticksTilActivityChange: number;
 }

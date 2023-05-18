@@ -11,7 +11,7 @@ import { FormProvider, useFormContext } from "react-hook-form";
 
 const defaultValues: RideCreatorFormProps = {
   name: "",
-  type: "",
+  type: 0,
   nausea: 1,
   excitement: 1,
   intensity: 1,
@@ -42,7 +42,7 @@ export const CreateRideForm = () => {
               })}
             >
               {rideTypes.map((rideType, i) => (
-                <option key={i} value={getRideTypeDescriptor(rideType).name}>
+                <option key={i} value={rideType}>
                   {getRideTypeDescriptor(rideType).name}
                 </option>
               ))}
@@ -50,7 +50,7 @@ export const CreateRideForm = () => {
           </div>
           <ValueSlider
             label="excitement"
-            stopLabels={["😴", "🫤", "🙂", "😄", "🤩"]}
+            stopLabels={["😴", "😯", "🙂", "😄", "🤩"]}
             defaultValue={2}
             onSlide={(value) => {
               console.log("Excitement", value);
@@ -58,7 +58,7 @@ export const CreateRideForm = () => {
           />
           <ValueSlider
             label="intensity"
-            stopLabels={["😑", "🫨", "😵"]}
+            stopLabels={["🥱", "😑", "🫨", "😫", "😵"]}
             defaultValue={2}
             onSlide={(value) => {
               console.log("Intensity", value);
@@ -66,7 +66,7 @@ export const CreateRideForm = () => {
           />
           <ValueSlider
             label="nausea"
-            stopLabels={["🙂", "🤢", "🤮"]}
+            stopLabels={["🙂", "😌", "😟", "🤢", "🤮"]}
             defaultValue={2}
             onSlide={(value) => {
               console.log("Nausea", value);
