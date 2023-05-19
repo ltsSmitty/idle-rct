@@ -82,10 +82,23 @@ export const guestHasAdverseImpacts = (guest: Guest): boolean => {
 /** Compute the next activity for the guest based on their current stats.
  * Having stats in a negative zone (e.g happiness too low, toilet too high) will result in weighing more heavily toward the corresponding events, (e.g. buying food, vomiting, leaving the park). @returns the next chosen activity.
 */
-export const getNextGuestActivity = (guest: Guest): { activity: GuestActivityKey } => {
+export const getNextGuestActivity = ({ guest, exclude }: { guest: Guest, exclude?: GuestActivityKey[] }): { activity: GuestActivityKey } => {
     const { currentActivity } = guest;
 
-    const { weights, interruptable } = nextActivityWeight[currentActivity];
+    const { weights: initialWeights, interruptable } = nextActivityWeight[currentActivity];
+    // exclude any activities from weights that are in the exclude list
+    let weights: typeof initialWeights;
+    if (!exclude) weights = initialWeights;
+    else
+        weights = Object.entries(initialWeights).reduce((acc, [activity, weight]) => {
+            if (!exclude.includes(activity as GuestActivityKey)) {
+                acc[activity as keyof typeof GuestActivity] = weight;
+            }
+            return acc;
+        }, {} as ActivityWeights);
+
+
+
 
     // if their current activity isnt' interruptable, just call weighted random instead of considering adverse impacts
     if (!interruptable) {
