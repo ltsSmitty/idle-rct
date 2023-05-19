@@ -2,6 +2,7 @@ import { canActivityBeInterrupted, getNextGuestActivity, guestHasAdverseImpacts,
 import { useStore } from "../slices/allStateInOneWithoutActions";
 import { calculateModifierValue } from "~/game/gameplay/generateGuests";
 import { GuestActivity } from "../slices/activityEffectSlice";
+import { guestRideQueueHandler } from "~/game/gameplay/guestRideQueueHandler";
 
 const { activityDurationStats, activityChanceToSwitchActivitiesStats } = useStore.getState();
 
@@ -16,7 +17,7 @@ const { activityDurationStats, activityChanceToSwitchActivitiesStats } = useStor
  * @returns An array of updated guests after performing activities.
  */
 export const doGuestActivites = ({ guests }: { guests: Guest[] }): Guest[] => {
-    const updatedGuests = guests.map(guest => {
+    const updatedGuests = guests.map(function processGuestActivity(guest) {
 
         // check if ticks til next activity is 0
         if (guest.ticksTilActivityChange <= 0 || hasGuestFixedProblemState(guest)) {
@@ -45,12 +46,34 @@ export const doGuestActivites = ({ guests }: { guests: Guest[] }): Guest[] => {
     return updatedGuests;
 }
 
+
 /** Set a guest's new activity and number of ticks til next activity */
 const assignNewActivity = (guest: Guest): Guest => {
-    guest.currentActivity = getNextGuestActivity(guest).activity;
-    // randomly choose a length, with an absolute max of 100 ticks
-    guest.ticksTilActivityChange = calculateModifierValue(activityDurationStats[guest.currentActivity], 100, 0);
-    return guest;
+    guest.destinationRideId = undefined;
+    guest.currentActivity = getNextGuestActivity({ guest }).activity;
+
+    if (shouldGuestBeHandledByRideQueue(guest)) {
+        // handle everything else with the ride queue handler
+        const guestWithRide = guestRideQueueHandler({ guest })
+        /**  this guest with ride needs to come back with a rideDestinationId. if it doesn't,
+         * then there wasn't a valid ride, so we need to get a new activity for the guest,
+         * this time excluding ride options        */
+        if (guestWithRide.destinationRideId !== null) return guestWithRide;
+
+        //there was an issues with getting a ride, so we need to get a new activity for the guest, this time excluding ride options
+        const rideActivitiesToExclude: GuestActivityKey[] = [
+            "WAITING_IN_LINE",
+            "WALKING_TO_RIDE",
+            "WALKING_TO_RIDE_ENTRANCE",
+            "RIDING_RIDE",
+            "WALKING_TO_RIDE_EXIT"];
+
+        guestWithRide.currentActivity = getNextGuestActivity({ guest, exclude: rideActivitiesToExclude }).activity;
+
+        // randomly choose a length, with an absolute max of 100 ticks
+        guest.ticksTilActivityChange = calculateModifierValue(activityDurationStats[guest.currentActivity], 100, 0);
+        return guest;
+    }
 }
 
 /**
@@ -60,4 +83,20 @@ const assignNewActivity = (guest: Guest): Guest => {
 const shouldGuestBeInterrupted = (): boolean => {
     const chanceToSwitch = calculateModifierValue(activityChanceToSwitchActivitiesStats, 1, 0);
     return Math.random() < chanceToSwitch;
+}
+
+/**
+ * Determines whether a guest should be handled by the ride queue handler based on their current activity.
+ * Guests that are walking to a ride, waiting in line, riding a ride, or walking to a ride entrance or exit should be handled by the ride queue handler.
+ * @param guest The guest to check.
+ * @returns A boolean indicating whether the guest should be handled by the ride queue handler.
+ */
+const shouldGuestBeHandledByRideQueue = (guest: Guest): boolean => {
+    return (
+        guest.currentActivity === "WALKING_TO_RIDE" ||
+        guest.currentActivity === "WAITING_IN_LINE" ||
+        guest.currentActivity === "RIDING_RIDE" ||
+        guest.currentActivity === "WALKING_TO_RIDE_ENTRANCE" ||
+        guest.currentActivity === "WALKING_TO_RIDE_EXIT"
+    )
 }
